@@ -5,12 +5,12 @@ import { useTibberEndpoint } from "../../api/tibber.service";
 import "./ConsumptionView.css";
 
 const ConsumptionView: FC = () => {
-  const { getConsumption: getShellyConsumption } = useShellyEndpoint();
+  const { getConsumption } = useShellyEndpoint();
   const { getAveragePrice } = useTibberEndpoint();
 
   const { data: shellyConsumption } = useQuery(
     ["SHELLY_CONSUMPTION"],
-    async () => await getShellyConsumption()
+    async () => await getConsumption()
   );
 
   var today = new Date();
