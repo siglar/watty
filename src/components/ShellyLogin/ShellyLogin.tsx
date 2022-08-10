@@ -5,6 +5,7 @@ import { useForm } from "@mantine/form";
 import { useShellyEndpoint } from "../../api/shelly.service";
 import { useAuthContext } from "../../context/auth.context";
 import { IconX } from "@tabler/icons";
+import logo from "../../assets/logo.jpg";
 
 const ShellyLogin: FC = () => {
   const { logIn } = useShellyEndpoint();
@@ -38,6 +39,7 @@ const ShellyLogin: FC = () => {
 
   return (
     <div className="login-wrapper">
+      <img src={logo} alt="Watty logo" />
       <form
         onSubmit={form.onSubmit((values) =>
           formSubmit(values.email, values.password, values.token)
