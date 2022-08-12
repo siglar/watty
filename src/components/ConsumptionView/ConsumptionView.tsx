@@ -1,12 +1,16 @@
+import { Button } from "@mantine/core";
+import { IconArrowBack } from "@tabler/icons";
 import { useQuery } from "@tanstack/react-query";
 import { FC } from "react";
 import { useShellyEndpoint } from "../../api/shelly.service";
 import { useTibberEndpoint } from "../../api/tibber.service";
+import { useAuthContext } from "../../context/auth.context";
 import "./ConsumptionView.css";
 
 const ConsumptionView: FC = () => {
   const { getConsumption } = useShellyEndpoint();
   const { getAveragePrice } = useTibberEndpoint();
+  const { setLoggedIntoShelly } = useAuthContext();
 
   const { data: shellyConsumption } = useQuery(
     ["SHELLY_CONSUMPTION"],
@@ -29,6 +33,13 @@ const ConsumptionView: FC = () => {
 
   return (
     <>
+      <Button
+        onClick={() => setLoggedIntoShelly(false)}
+        leftIcon={<IconArrowBack />}
+        variant="subtle"
+      >
+        Back to login
+      </Button>
       <p>Consumed kilowatts: {consumedKw} kW</p>
       <p>Kilowatt price: {averagePrice.toFixed(2)} kr</p>
       <p>Price for device {priceForDevice.toFixed(2)} kr</p>
