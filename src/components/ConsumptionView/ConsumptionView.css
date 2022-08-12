@@ -4,3 +4,7 @@
     max-width: 720px;
     width: 80vw;
 }
+
+.button-row{
+    display: flex;
+}

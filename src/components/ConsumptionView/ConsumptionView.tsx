@@ -1,7 +1,7 @@
-import { Button } from "@mantine/core";
-import { IconArrowBack } from "@tabler/icons";
+import { Button, Loader, LoadingOverlay } from "@mantine/core";
+import { IconArrowBack, IconRefresh } from "@tabler/icons";
 import { useQuery } from "@tanstack/react-query";
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 import { useShellyEndpoint } from "../../api/shelly.service";
 import { useTibberEndpoint } from "../../api/tibber.service";
 import { useAuthContext } from "../../context/auth.context";
@@ -12,37 +12,74 @@ const ConsumptionView: FC = () => {
   const { getAveragePrice } = useTibberEndpoint();
   const { setLoggedIntoShelly } = useAuthContext();
 
-  const { data: shellyConsumption } = useQuery(
-    ["SHELLY_CONSUMPTION"],
-    async () => await getConsumption()
-  );
+  const [consumedKw, setConsumedKw] = useState(0);
+  const [priceForDevice, setPriceForDevice] = useState(0);
+
+  const {
+    data: shellyConsumption,
+    refetch: refetchShelly,
+    isRefetching: shellyFetching,
+  } = useQuery(["SHELLY, CONSUMPTION"], async () => await getConsumption());
 
   var today = new Date();
   var days = Number.parseInt(String(today.getDate()).padStart(2, "0"));
 
-  const { data: averagePrice } = useQuery(
-    ["TIBBER_CONSUMPTION"],
+  const {
+    data: averagePrice,
+    refetch: refetchTibber,
+    isRefetching: tibberFetching,
+  } = useQuery(
+    ["TIBBER, CONSUMPTION"],
     async () => await getAveragePrice(days)
   );
 
-  const consumedKw = shellyConsumption?.data.total ?? 0;
+  useEffect(() => {
+    if (shellyConsumption !== undefined) {
+      setConsumedKw(shellyConsumption.data.total ?? 0);
+    }
+  }, [shellyConsumption]);
 
-  if (!averagePrice) return null;
+  useEffect(() => {
+    if (averagePrice !== undefined && shellyConsumption !== undefined) {
+      setPriceForDevice(shellyConsumption.data.total * averagePrice);
+    }
+  }, [averagePrice]);
 
-  const priceForDevice = consumedKw * averagePrice;
+  const refetch = () => {
+    refetchShelly();
+    refetchTibber();
+  };
+
+  if (!shellyConsumption || !averagePrice) return <Loader />;
 
   return (
     <>
-      <Button
-        onClick={() => setLoggedIntoShelly(false)}
-        leftIcon={<IconArrowBack />}
-        variant="subtle"
-      >
-        Back to login
-      </Button>
-      <p>Consumed kilowatts: {consumedKw} kW</p>
-      <p>Kilowatt price: {averagePrice.toFixed(2)} kr</p>
-      <p>Price for device {priceForDevice.toFixed(2)} kr</p>
+      <div className="button-row">
+        <LoadingOverlay
+          visible={shellyFetching || tibberFetching}
+          overlayBlur={1}
+        />
+        <Button
+          onClick={() => setLoggedIntoShelly(false)}
+          leftIcon={<IconArrowBack />}
+          variant="subtle"
+        >
+          Back to login
+        </Button>
+        <Button
+          onClick={() => refetch()}
+          leftIcon={<IconRefresh />}
+          variant="subtle"
+        >
+          Refresh
+        </Button>
+      </div>
+
+      <article>
+        <p>Consumed kilowatts: {consumedKw} kW</p>
+        <p>Kilowatt price: {averagePrice.toFixed(2)} kr</p>
+        <p>Price for device {priceForDevice.toFixed(2)} kr</p>
+      </article>
     </>
   );
 };
