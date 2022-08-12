@@ -1,9 +1,16 @@
 .login-wrapper{
     display: flex;
     flex-direction: column;
-    width: 50%;
+    max-width: 720px;
+    width: 80vw;
 }
 
 .notification-margin{
     margin-top: 2ch;
+}
+
+.tibber-checkbox {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1ch;
 }

@@ -1,5 +1,11 @@
 import { FC, useState } from "react";
-import { TextInput, Button, Group, Notification } from "@mantine/core";
+import {
+  TextInput,
+  Button,
+  Group,
+  Notification,
+  Checkbox,
+} from "@mantine/core";
 import "./ShellyLogin.css";
 import { useForm } from "@mantine/form";
 import { useShellyEndpoint } from "../../api/shelly.service";
@@ -18,7 +24,8 @@ const ShellyLogin: FC = () => {
     initialValues: {
       email: "",
       password: "",
-      token: "",
+      token: localStorage.getItem("tibberToken") ?? "",
+      rememberToken: false,
     },
 
     validate: {
@@ -26,9 +33,17 @@ const ShellyLogin: FC = () => {
     },
   });
 
-  const formSubmit = async (email: string, password: string, token: string) => {
+  const formSubmit = async (
+    email: string,
+    password: string,
+    token: string,
+    rememberToken: boolean
+  ) => {
     setLoading(true);
     setTibberToken("Bearer " + token);
+
+    if (rememberToken) localStorage.setItem("tibberToken", token);
+
     const loggedIn = await logIn(email, password);
     if (loggedIn) setLoggedIntoShelly(true);
     else {
@@ -42,7 +57,12 @@ const ShellyLogin: FC = () => {
       <img src={logo} alt="Watty logo" />
       <form
         onSubmit={form.onSubmit((values) =>
-          formSubmit(values.email, values.password, values.token)
+          formSubmit(
+            values.email,
+            values.password,
+            values.token,
+            values.rememberToken
+          )
         )}
       >
         <TextInput
@@ -71,6 +91,13 @@ const ShellyLogin: FC = () => {
           placeholder="Token retrieved from Tibber"
           {...form.getInputProps("token")}
         />
+
+        <div className="tibber-checkbox">
+          <Checkbox
+            label="Remember token"
+            {...form.getInputProps("rememberToken")}
+          />
+        </div>
 
         {logInError && (
           <Notification
