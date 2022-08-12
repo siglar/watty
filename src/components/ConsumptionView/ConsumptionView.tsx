@@ -43,7 +43,7 @@ const ConsumptionView: FC = () => {
     if (averagePrice !== undefined && shellyConsumption !== undefined) {
       setPriceForDevice(shellyConsumption.data.total * averagePrice);
     }
-  }, [averagePrice]);
+  }, [consumedKw]);
 
   const refetch = () => {
     refetchShelly();
