@@ -5,7 +5,9 @@ import { FC, useEffect, useState } from "react";
 import { useShellyEndpoint } from "../../api/shelly.service";
 import { useTibberEndpoint } from "../../api/tibber.service";
 import { useAuthContext } from "../../context/auth.context";
+import ConsumptionChart from "../ConsumptionChart/ConsumptionChart";
 import "./ConsumptionView.css";
+import { format } from "date-fns";
 
 const ConsumptionView: FC = () => {
   const { getConsumption } = useShellyEndpoint();
@@ -80,6 +82,17 @@ const ConsumptionView: FC = () => {
         <p>Kilowatt price: {averagePrice.toFixed(2)} kr</p>
         <p>Price for device {priceForDevice.toFixed(2)} kr</p>
       </article>
+
+      <ConsumptionChart
+        data={shellyConsumption.data.history
+          .filter((h) => h.consumption > 0)
+          .map((h) => {
+            return {
+              date: format(new Date(h.datetime), "dd.MMM"),
+              cost: ((h.consumption / 1000) * averagePrice).toFixed(2),
+            };
+          })}
+      />
     </>
   );
 };
