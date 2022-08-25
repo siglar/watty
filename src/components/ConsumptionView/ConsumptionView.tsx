@@ -1,66 +1,41 @@
-import { Button, Loader, LoadingOverlay } from "@mantine/core";
+import { Button } from "@mantine/core";
 import { IconArrowBack, IconRefresh } from "@tabler/icons";
-import { useQuery } from "@tanstack/react-query";
-import { FC, useEffect, useState } from "react";
-import { useShellyEndpoint } from "../../api/shelly.service";
-import { useTibberEndpoint } from "../../api/tibber.service";
+import { FC } from "react";
 import { useAuthContext } from "../../context/auth.context";
 import ConsumptionChart from "../ConsumptionChart/ConsumptionChart";
 import "./ConsumptionView.css";
 import { format } from "date-fns";
+import { ShellyRoot } from "../../models/shelly.models";
 
-const ConsumptionView: FC = () => {
-  const { getConsumption } = useShellyEndpoint();
-  const { getAveragePrice } = useTibberEndpoint();
+interface ConsumptionViewProps {
+  shellyConsumption: ShellyRoot;
+  averagePrice: number;
+  refetch: () => void;
+}
+
+const ConsumptionView: FC<ConsumptionViewProps> = (
+  props: ConsumptionViewProps
+) => {
+  const { shellyConsumption, averagePrice, refetch } = props;
+
   const { setLoggedIntoShelly } = useAuthContext();
 
-  const [consumedKw, setConsumedKw] = useState(0);
-  const [priceForDevice, setPriceForDevice] = useState(0);
+  const consumedKw = shellyConsumption.data.total ?? 0;
 
-  const {
-    data: shellyConsumption,
-    refetch: refetchShelly,
-    isRefetching: shellyFetching,
-  } = useQuery(["SHELLY, CONSUMPTION"], async () => await getConsumption());
+  const priceForDevice = shellyConsumption.data.total * averagePrice;
 
-  var today = new Date();
-  var days = Number.parseInt(String(today.getDate()).padStart(2, "0"));
-
-  const {
-    data: averagePrice,
-    refetch: refetchTibber,
-    isRefetching: tibberFetching,
-  } = useQuery(
-    ["TIBBER, CONSUMPTION"],
-    async () => await getAveragePrice(days)
-  );
-
-  useEffect(() => {
-    if (shellyConsumption !== undefined) {
-      setConsumedKw(shellyConsumption.data.total ?? 0);
-    }
-  }, [shellyConsumption]);
-
-  useEffect(() => {
-    if (averagePrice !== undefined && shellyConsumption !== undefined) {
-      setPriceForDevice(shellyConsumption.data.total * averagePrice);
-    }
-  }, [consumedKw, averagePrice]);
-
-  const refetch = () => {
-    refetchShelly();
-    refetchTibber();
-  };
-
-  if (!shellyConsumption || !averagePrice) return <Loader />;
+  const chartData = shellyConsumption.data.history
+    .filter((h) => h.consumption > 0)
+    .map((h) => {
+      return {
+        date: format(new Date(h.datetime), "dd.MMM"),
+        cost: ((h.consumption / 1000) * averagePrice).toFixed(2),
+      };
+    });
 
   return (
     <>
       <div className="button-row">
-        <LoadingOverlay
-          visible={shellyFetching || tibberFetching}
-          overlayBlur={1}
-        />
         <Button
           onClick={() => setLoggedIntoShelly(false)}
           leftIcon={<IconArrowBack />}
@@ -83,16 +58,7 @@ const ConsumptionView: FC = () => {
         <p>Price for device {priceForDevice.toFixed(2)} kr</p>
       </article>
 
-      <ConsumptionChart
-        data={shellyConsumption.data.history
-          .filter((h) => h.consumption > 0)
-          .map((h) => {
-            return {
-              date: format(new Date(h.datetime), "dd.MMM"),
-              cost: ((h.consumption / 1000) * averagePrice).toFixed(2),
-            };
-          })}
-      />
+      <ConsumptionChart data={chartData} />
     </>
   );
 };
