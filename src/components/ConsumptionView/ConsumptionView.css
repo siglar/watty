@@ -1,10 +1,10 @@
-.login-wrapper{
+.login-wrapper {
     display: flex;
     flex-direction: column;
     max-width: 720px;
     width: 80vw;
 }
 
-.button-row{
+.button-row {
     display: flex;
 }
