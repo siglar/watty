@@ -29,7 +29,9 @@ const ConsumptionView: FC<ConsumptionViewProps> = (
     .map((h) => {
       return {
         date: format(new Date(h.datetime), "dd.MMM"),
-        cost: ((h.consumption / 1000) * averagePrice).toFixed(2),
+        cost: Number.parseFloat(
+          ((h.consumption / 1000) * averagePrice).toFixed(2)
+        ),
       };
     });
 

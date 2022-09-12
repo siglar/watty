@@ -2,11 +2,13 @@ import { format } from "date-fns";
 import { FC } from "react";
 import {
   CartesianGrid,
+  Legend,
   Line,
   LineChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
+  YAxis,
 } from "recharts";
 import { ChartData } from "../../models/chart.models";
 import "./ConsumptionChart.css";
