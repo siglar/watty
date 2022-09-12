@@ -2,16 +2,31 @@ import { ShellyRoot } from "../models/shelly.models";
 import sha1 from "crypto-js/sha1";
 import { useAuthContext } from "../context/auth.context";
 import axios from "axios";
+import { format } from "date-fns";
 
 export const shellyUrl = "https://shelly-44-eu.shelly.cloud";
 
 export interface UseShellyEndpoint {
   logIn: (userName: string, password: string) => Promise<boolean>;
-  getConsumption: () => Promise<ShellyRoot>;
+  getConsumption: (month: number) => Promise<ShellyRoot>;
 }
 
 export const useShellyEndpoint = (): UseShellyEndpoint => {
   const { setShellyToken, shellyToken } = useAuthContext();
+
+  const getDay = (month: number) => {
+    const date = new Date();
+    var firstDay = new Date(date.getFullYear(), month, 1);
+
+    return format(firstDay, "yyyy-MM-dd");
+  };
+
+  const getLastDay = (month: number) => {
+    const date = new Date();
+    var lastDay = new Date(date.getFullYear(), month + 1, 0);
+
+    return format(lastDay, "yyyy-MM-dd");
+  };
 
   const getBearerToken = async (
     userName: string,
@@ -43,9 +58,12 @@ export const useShellyEndpoint = (): UseShellyEndpoint => {
     return false;
   };
 
-  const getConsumption = async (): Promise<ShellyRoot> => {
+  const getConsumption = async (month: number): Promise<ShellyRoot> => {
+    const firstDay = getDay(month);
+    const lastDay = getLastDay(month);
+
     const { data } = await axios.post(
-      `${shellyUrl}/statistics/relay/consumption?id=28d566&channel=0&date_range=custom&date_from=2022-08-01&date_to=2022-08-31`,
+      `${shellyUrl}/statistics/relay/consumption?id=28d566&channel=0&date_range=custom&date_from=${firstDay}&date_to=${lastDay}`,
       null,
       { headers: { Authorization: shellyToken } }
     );

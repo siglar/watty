@@ -1,15 +1,46 @@
-import { FC } from "react";
+import { Select } from "@mantine/core";
+import { FC, useState } from "react";
 import ShellyLogin from "../components/ShellyLogin/ShellyLogin";
-
 import { useAuthContext } from "../context/auth.context";
 import ConsumptionPage from "./Consumption.page";
+
+const months = [
+  { value: "0", label: "January" },
+  { value: "1", label: "February" },
+  { value: "2", label: "March" },
+  { value: "3", label: "April" },
+  { value: "4", label: "May" },
+  { value: "5", label: "June" },
+  { value: "6", label: "July" },
+  { value: "7", label: "August" },
+  { value: "8", label: "September" },
+  { value: "9", label: "October" },
+  { value: "10", label: "November" },
+  { value: "11", label: "December" },
+];
 
 const LandingPage: FC = () => {
   const { loggedIntoShelly } = useAuthContext();
 
+  const date = new Date();
+  const currentMonth = date.getMonth();
+  const [month, setMonth] = useState<number>(currentMonth);
+
   if (!loggedIntoShelly) return <ShellyLogin />;
 
-  return <ConsumptionPage />;
+  return (
+    <>
+      <ConsumptionPage month={month} />
+      <Select
+        label="Choose month"
+        defaultValue={currentMonth.toString()}
+        data={months}
+        onChange={(event) =>
+          setMonth(Number.parseInt(event ?? currentMonth.toString()))
+        }
+      />
+    </>
+  );
 };
 
 export default LandingPage;

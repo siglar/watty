@@ -5,7 +5,15 @@ import { useShellyEndpoint } from "../api/shelly.service";
 import { useTibberEndpoint } from "../api/tibber.service";
 import ConsumptionView from "../components/ConsumptionView/ConsumptionView";
 
-const ConsumptionPage: FC = () => {
+interface ConsumptionPageProps {
+  month: number;
+}
+
+const ConsumptionPage: FC<ConsumptionPageProps> = (
+  props: ConsumptionPageProps
+) => {
+  const { month } = props;
+
   const { getConsumption } = useShellyEndpoint();
   const { getAveragePrice } = useTibberEndpoint();
 
@@ -13,18 +21,18 @@ const ConsumptionPage: FC = () => {
     data: shellyConsumption,
     refetch: refetchShelly,
     isRefetching: shellyFetching,
-  } = useQuery(["SHELLY, CONSUMPTION"], async () => await getConsumption());
-
-  var today = new Date();
-  var days = Number.parseInt(String(today.getDate()).padStart(2, "0"));
+  } = useQuery(
+    ["SHELLY, CONSUMPTION", month],
+    async () => await getConsumption(month)
+  );
 
   const {
     data: averagePrice,
     refetch: refetchTibber,
     isRefetching: tibberFetching,
   } = useQuery(
-    ["TIBBER, CONSUMPTION"],
-    async () => await getAveragePrice(days)
+    ["TIBBER, CONSUMPTION", month],
+    async () => await getAveragePrice(month)
   );
 
   const refetch = () => {
@@ -34,12 +42,16 @@ const ConsumptionPage: FC = () => {
 
   if (!shellyConsumption || !averagePrice) return <Loader />;
 
+  if (shellyConsumption.data.total <= 0)
+    return <p>No data for selected period</p>;
+
   return (
     <>
       <LoadingOverlay
         visible={shellyFetching || tibberFetching}
         overlayBlur={1}
       />
+
       <ConsumptionView
         averagePrice={averagePrice}
         shellyConsumption={shellyConsumption}

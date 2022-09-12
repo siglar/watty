@@ -54,7 +54,7 @@ const ConsumptionView: FC<ConsumptionViewProps> = (
 
       <article>
         <p>Consumed kilowatts: {consumedKw} kW</p>
-        <p>Kilowatt price: {averagePrice.toFixed(2)} kr</p>
+        <p>Average kilowatt price: {averagePrice.toFixed(2)} kr</p>
         <p>Price for device {priceForDevice.toFixed(2)} kr</p>
       </article>
 
