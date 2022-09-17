@@ -46,12 +46,9 @@ const ConsumptionView: FC<ConsumptionViewProps> = (
 
       return {
         date: shellyDate,
-        costData: {
-          cost: Number.parseFloat(
-            ((h.consumption / 1000) * dayPrice).toFixed(2)
-          ),
-          kWPrice: dayPrice.toFixed(2),
-        },
+        cost: Number.parseFloat(((h.consumption / 1000) * dayPrice).toFixed(2)),
+        kWPrice: Number.parseFloat(dayPrice.toFixed(2)),
+        consumption: Number.parseFloat((h.consumption / 1000).toFixed(2)),
       };
     });
 

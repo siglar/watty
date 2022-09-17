@@ -1,10 +1,11 @@
 import { format } from "date-fns";
 import { FC } from "react";
 import {
+  Bar,
   CartesianGrid,
+  ComposedChart,
   Legend,
   Line,
-  LineChart,
   ResponsiveContainer,
   Tooltip,
   TooltipProps,
@@ -33,7 +34,7 @@ const ConsumptionChart: FC<ConsumptionChartProps> = (
   const renderTooltip = (content: TooltipProps<ValueType, NameType>) => {
     if (content.payload && content.payload.length > 0) {
       return (
-        <div
+        <article
           style={{
             border: "#bbb 1.5px solid",
           }}
@@ -43,9 +44,30 @@ const ConsumptionChart: FC<ConsumptionChartProps> = (
               margin: "0 0",
               padding: "3px 7.5px",
               backgroundColor: "white",
+              borderBottom: "#bbb 1.5px solid",
             }}
           >
-            Date: {content.payload[0].payload.date}
+            {content.payload[0].payload.date}
+          </p>
+          <p
+            style={{
+              margin: "0 0",
+              padding: "3px 7.5px",
+              backgroundColor: "white",
+              color: "#ff7300",
+            }}
+          >
+            Cost: {content.payload[0].payload.cost} kr
+          </p>
+          <p
+            style={{
+              margin: "0 0",
+              padding: "3px 7.5px",
+              backgroundColor: "white",
+              color: "#413ea0",
+            }}
+          >
+            Consumption: {content.payload[0].payload.consumption} kW
           </p>
           <p
             style={{
@@ -54,18 +76,9 @@ const ConsumptionChart: FC<ConsumptionChartProps> = (
               backgroundColor: "white",
             }}
           >
-            Cost: {content.payload[0].payload.costData.cost} kr
+            Kilowatt price: {content.payload[0].payload.kWPrice} kr
           </p>
-          <p
-            style={{
-              margin: "0 0",
-              padding: "3px 7.5px",
-              backgroundColor: "white",
-            }}
-          >
-            Kilowatt price: {content.payload[0].payload.costData.kWPrice} kr
-          </p>
-        </div>
+        </article>
       );
     }
     return null;
@@ -74,21 +87,18 @@ const ConsumptionChart: FC<ConsumptionChartProps> = (
   return (
     <div className="consumption-wrapper">
       <ResponsiveContainer width="100%" height={400}>
-        <LineChart
-          data={data}
-          margin={{ top: 5, right: 20, left: 10, bottom: 5 }}
-        >
+        <ComposedChart height={400} data={data}>
           <XAxis dataKey="date" tickFormatter={dateFormatter} />
           <Tooltip content={(content) => renderTooltip(content)} />
-          <CartesianGrid stroke="#f5f5f5" />
-          <Legend align="left" verticalAlign="top" formatter={() => "Cost"} />
-          <Line
-            type="monotone"
-            dataKey="costData.cost"
-            stroke="green"
-            yAxisId={0}
+          <Legend
+            align="left"
+            verticalAlign="top"
+            formatter={(value) => value[0].toUpperCase() + value.slice(1)}
           />
-        </LineChart>
+          <CartesianGrid stroke="#f5f5f5" />
+          <Bar dataKey="consumption" barSize={20} fill="#413ea0" />
+          <Line type="monotone" dataKey="cost" stroke="#ff7300" />
+        </ComposedChart>
       </ResponsiveContainer>
     </div>
   );
