@@ -1,8 +1,10 @@
-import { Select } from "@mantine/core";
+import { ActionIcon, Button } from "@mantine/core";
 import { FC, useState } from "react";
 import ShellyLogin from "../components/ShellyLogin/ShellyLogin";
 import { useAuthContext } from "../context/auth.context";
 import ConsumptionPage from "./Consumption.page";
+import { IconArrowLeft, IconArrowRight } from "@tabler/icons";
+import { Direction } from "../enums/direction.enum";
 
 const months = [
   { value: "0", label: "January" },
@@ -25,20 +27,51 @@ const LandingPage: FC = () => {
   const date = new Date();
   const currentMonth = date.getMonth();
   const [month, setMonth] = useState<number>(currentMonth);
+  const [direction, setDirection] = useState<Direction>("before");
+
+  const pageToPrevious = () => {
+    setMonth((current) => current - 1);
+    setDirection("before");
+  };
+
+  const pageToNext = () => {
+    setMonth((current) => current + 1);
+    setDirection("after");
+  };
 
   if (!loggedIntoShelly) return <ShellyLogin />;
 
   return (
     <>
-      <ConsumptionPage month={month} />
-      <Select
-        label="Choose month"
-        defaultValue={currentMonth.toString()}
-        data={months}
-        onChange={(event) =>
-          setMonth(Number.parseInt(event ?? currentMonth.toString()))
-        }
-      />
+      <ConsumptionPage month={month} direction={direction} />
+
+      <div className="button-row">
+        <ActionIcon
+          onClick={pageToPrevious}
+          variant="subtle"
+          title="Previous month"
+          size="xl"
+          color="blue"
+        >
+          <IconArrowLeft />
+        </ActionIcon>
+
+        <p>{months.find((m) => m.value === month.toString())?.label}</p>
+
+        <ActionIcon
+          disabled={
+            months.find((m) => m.value === month.toString())?.value ===
+            currentMonth.toString()
+          }
+          onClick={pageToNext}
+          variant="subtle"
+          title="Next month"
+          size="xl"
+          color="blue"
+        >
+          <IconArrowRight />
+        </ActionIcon>
+      </div>
     </>
   );
 };

@@ -4,15 +4,17 @@ import { FC } from "react";
 import { useShellyEndpoint } from "../api/shelly.service";
 import { useTibberEndpoint } from "../api/tibber.service";
 import ConsumptionView from "../components/ConsumptionView/ConsumptionView";
+import { Direction } from "../enums/direction.enum";
 
 interface ConsumptionPageProps {
   month: number;
+  direction: Direction;
 }
 
 const ConsumptionPage: FC<ConsumptionPageProps> = (
   props: ConsumptionPageProps
 ) => {
-  const { month } = props;
+  const { month, direction } = props;
 
   const { getConsumption } = useShellyEndpoint();
   const { getAveragePrice } = useTibberEndpoint();
@@ -32,7 +34,7 @@ const ConsumptionPage: FC<ConsumptionPageProps> = (
     isRefetching: tibberFetching,
   } = useQuery(
     ["TIBBER, CONSUMPTION", month],
-    async () => await getAveragePrice(month)
+    async () => await getAveragePrice(month, direction)
   );
 
   const refetch = () => {

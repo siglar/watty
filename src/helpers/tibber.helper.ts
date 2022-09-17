@@ -1,12 +1,17 @@
 import { TibberRoot } from "../models/tibber.models";
 
 export const calculateAveragePrice = (tibberRoot: TibberRoot) => {
-  const consumptions = tibberRoot.data.viewer.homes.map((h) => h.consumption);
-  const priceArray = consumptions.flatMap((c) =>
-    c.nodes.filter((n) => n.unitPrice !== null).map((n) => n.unitPrice)
-  );
+  const consumption = tibberRoot.data.viewer.home.consumption;
+  const priceArray = consumption.nodes
+    .filter((n) => n.unitPrice !== null)
+    .map((n) => n.unitPrice);
+
   const priceTotal = priceArray.reduce((partialSum, a) => partialSum + a, 0);
   const averagePrice = priceTotal / priceArray.length;
 
   return averagePrice;
+};
+
+export const getDays = (year: number, month: number) => {
+  return new Date(year, month, 0).getDate();
 };

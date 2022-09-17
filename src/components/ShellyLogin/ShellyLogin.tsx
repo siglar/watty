@@ -15,7 +15,7 @@ import logo from "../../assets/logo.jpg";
 
 const ShellyLogin: FC = () => {
   const { logIn } = useShellyEndpoint();
-  const { setLoggedIntoShelly, setTibberToken } = useAuthContext();
+  const { setLoggedIntoShelly, setTibberToken, setHomeId } = useAuthContext();
 
   const [logInError, setLoginError] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
@@ -25,7 +25,9 @@ const ShellyLogin: FC = () => {
       email: "",
       password: "",
       token: localStorage.getItem("tibberToken") ?? "",
+      home: localStorage.getItem("tibberHome") ?? "",
       rememberToken: false,
+      rememberHome: false,
     },
 
     validate: {
@@ -37,12 +39,16 @@ const ShellyLogin: FC = () => {
     email: string,
     password: string,
     token: string,
-    rememberToken: boolean
+    home: string,
+    rememberToken: boolean,
+    rememberHome: boolean
   ) => {
     setLoading(true);
     setTibberToken("Bearer " + token);
+    setHomeId(home);
 
     if (rememberToken) localStorage.setItem("tibberToken", token);
+    if (rememberHome) localStorage.setItem("tibberHome", home);
 
     const loggedIn = await logIn(email, password);
     if (loggedIn) setLoggedIntoShelly(true);
@@ -61,7 +67,9 @@ const ShellyLogin: FC = () => {
             values.email,
             values.password,
             values.token,
-            values.rememberToken
+            values.home,
+            values.rememberToken,
+            values.rememberHome
           )
         )}
       >
@@ -96,6 +104,22 @@ const ShellyLogin: FC = () => {
           <Checkbox
             label="Remember token"
             {...form.getInputProps("rememberToken")}
+          />
+        </div>
+
+        <TextInput
+          autoComplete="on"
+          type="text"
+          required
+          label="Tibber home"
+          placeholder="Home ID retrieved from Tibber"
+          {...form.getInputProps("home")}
+        />
+
+        <div className="tibber-checkbox">
+          <Checkbox
+            label="Remember home"
+            {...form.getInputProps("rememberHome")}
           />
         </div>
 

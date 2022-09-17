@@ -9,7 +9,13 @@ export interface Node {
 }
 
 export interface Consumption {
+  pageInfo: PageInfo;
   nodes: Node[];
+}
+
+export interface PageInfo {
+  startCursor: string;
+  endCursor: string;
 }
 
 export interface Home {
@@ -18,7 +24,7 @@ export interface Home {
 }
 
 export interface Viewer {
-  homes: Home[];
+  home: Home;
 }
 
 export interface Data {

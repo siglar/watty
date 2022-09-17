@@ -19,6 +19,8 @@ export type AuthContextType = {
   setShellyToken: Dispatch<SetStateAction<string>>;
   tibberToken: string;
   setTibberToken: Dispatch<SetStateAction<string>>;
+  homeId: string;
+  setHomeId: Dispatch<SetStateAction<string>>;
 };
 
 export const AuthContext = createContext<AuthContextType>({
@@ -28,6 +30,8 @@ export const AuthContext = createContext<AuthContextType>({
   setShellyToken: () => console.log("no provider"),
   tibberToken: "",
   setTibberToken: () => console.log("no provider"),
+  homeId: "",
+  setHomeId: () => console.log("no provider"),
 });
 
 export const useAuthContext = (): AuthContextType => useContext(AuthContext);
@@ -38,6 +42,7 @@ export const AuthContextProvider: FC<ProviderProps> = (
   const [loggedIntoShelly, setLoggedIntoShelly] = useState<boolean>(false);
   const [shellyToken, setShellyToken] = useState<string>("");
   const [tibberToken, setTibberToken] = useState<string>("");
+  const [homeId, setHomeId] = useState<string>("");
 
   return (
     <AuthContext.Provider
@@ -48,6 +53,8 @@ export const AuthContextProvider: FC<ProviderProps> = (
         setShellyToken,
         tibberToken,
         setTibberToken,
+        homeId,
+        setHomeId,
       }}
     >
       {props.children}
