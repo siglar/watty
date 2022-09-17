@@ -1,6 +1,6 @@
 export interface Node {
-  from: Date;
-  to: Date;
+  from: string;
+  to: string;
   cost: number;
   unitPrice: number;
   unitPriceVAT: number;

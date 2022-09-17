@@ -2,23 +2,26 @@ import axios, { AxiosResponse } from "axios";
 import { useRef } from "react";
 import { useAuthContext } from "../context/auth.context";
 import { Direction } from "../enums/direction.enum";
-import { calculateAveragePrice, getDays } from "../helpers/tibber.helper";
+import { getDays } from "../helpers/tibber.helper";
 import { TibberRoot } from "../models/tibber.models";
 
 const tibberUrl = "https://api.tibber.com/v1-beta/gql";
 
 export interface UseTibberEndpoint {
-  getAveragePrice: (month: number, direction: Direction) => Promise<number>;
+  getTibberConsumption: (
+    month: number,
+    direction: Direction
+  ) => Promise<TibberRoot>;
 }
 
 export const useTibberEndpoint = (): UseTibberEndpoint => {
   const { tibberToken, homeId } = useAuthContext();
   const currentCursor = useRef<string | null>(null);
 
-  const getAveragePrice = async (
+  const getTibberConsumption = async (
     month: number,
     direction: Direction
-  ): Promise<number> => {
+  ): Promise<TibberRoot> => {
     const today = new Date();
     const currentMonth = today.getMonth();
 
@@ -32,8 +35,8 @@ export const useTibberEndpoint = (): UseTibberEndpoint => {
     const resolution = `DAILY, last: ${days}`;
 
     // prettier-ignore
-    const query = `
-    {
+    const query = 
+    `{
         viewer {
           home(id: \"${homeId}\") {
             timeZone      
@@ -54,10 +57,7 @@ export const useTibberEndpoint = (): UseTibberEndpoint => {
             }
           }
         }
-      }
-      `;
-
-    console.log(query);
+      }`;
 
     const result = (await axios({
       url: tibberUrl,
@@ -73,8 +73,8 @@ export const useTibberEndpoint = (): UseTibberEndpoint => {
     currentCursor.current =
       result.data.data.viewer.home.consumption.pageInfo.startCursor;
 
-    return calculateAveragePrice(result.data);
+    return result.data;
   };
 
-  return { getAveragePrice };
+  return { getTibberConsumption };
 };

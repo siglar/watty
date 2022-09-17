@@ -17,7 +17,7 @@ const ConsumptionPage: FC<ConsumptionPageProps> = (
   const { month, direction } = props;
 
   const { getConsumption } = useShellyEndpoint();
-  const { getAveragePrice } = useTibberEndpoint();
+  const { getTibberConsumption } = useTibberEndpoint();
 
   const {
     data: shellyConsumption,
@@ -29,12 +29,12 @@ const ConsumptionPage: FC<ConsumptionPageProps> = (
   );
 
   const {
-    data: averagePrice,
+    data: tibberData,
     refetch: refetchTibber,
     isRefetching: tibberFetching,
   } = useQuery(
     ["TIBBER, CONSUMPTION", month],
-    async () => await getAveragePrice(month, direction)
+    async () => await getTibberConsumption(month, direction)
   );
 
   const refetch = () => {
@@ -42,7 +42,7 @@ const ConsumptionPage: FC<ConsumptionPageProps> = (
     refetchTibber();
   };
 
-  if (!shellyConsumption || !averagePrice) return <Loader />;
+  if (!shellyConsumption || !tibberData) return <Loader />;
 
   if (shellyConsumption.data.total <= 0)
     return <p>No data for selected period</p>;
@@ -55,7 +55,7 @@ const ConsumptionPage: FC<ConsumptionPageProps> = (
       />
 
       <ConsumptionView
-        averagePrice={averagePrice}
+        tibberData={tibberData}
         shellyConsumption={shellyConsumption}
         refetch={refetch}
       />

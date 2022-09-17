@@ -6,32 +6,52 @@ import ConsumptionChart from "../ConsumptionChart/ConsumptionChart";
 import "./ConsumptionView.css";
 import { format } from "date-fns";
 import { ShellyRoot } from "../../models/shelly.models";
+import { TibberRoot } from "../../models/tibber.models";
+import { calculateAveragePrice } from "../../helpers/tibber.helper";
+import { ChartData } from "../../models/chart.models";
 
 interface ConsumptionViewProps {
   shellyConsumption: ShellyRoot;
-  averagePrice: number;
+  tibberData: TibberRoot;
   refetch: () => void;
 }
 
 const ConsumptionView: FC<ConsumptionViewProps> = (
   props: ConsumptionViewProps
 ) => {
-  const { shellyConsumption, averagePrice, refetch } = props;
+  const { shellyConsumption, tibberData, refetch } = props;
 
   const { setLoggedIntoShelly } = useAuthContext();
+
+  const averagePrice = calculateAveragePrice(tibberData);
 
   const consumedKw = shellyConsumption.data.total ?? 0;
 
   const priceForDevice = shellyConsumption.data.total * averagePrice;
 
-  const chartData = shellyConsumption.data.history
+  const dayPrices = tibberData.data.viewer.home.consumption.nodes.map((n) => {
+    return {
+      date: format(new Date(n.to), "dd.MMM"),
+      cost: n.unitPrice,
+    };
+  });
+
+  const chartData: ChartData[] = shellyConsumption.data.history
     .filter((h) => h.consumption > 0)
     .map((h) => {
+      const shellyDate = format(new Date(h.datetime), "dd.MMM");
+
+      const dayPrice =
+        dayPrices.find((dp) => dp.date === shellyDate)?.cost ?? averagePrice;
+
       return {
-        date: format(new Date(h.datetime), "dd.MMM"),
-        cost: Number.parseFloat(
-          ((h.consumption / 1000) * averagePrice).toFixed(2)
-        ),
+        date: shellyDate,
+        costData: {
+          cost: Number.parseFloat(
+            ((h.consumption / 1000) * dayPrice).toFixed(2)
+          ),
+          kWPrice: dayPrice.toFixed(2),
+        },
       };
     });
 
