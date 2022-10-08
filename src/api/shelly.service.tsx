@@ -41,6 +41,7 @@ export const useShellyEndpoint = (): UseShellyEndpoint => {
 
       return data.data.token;
     } catch (error) {
+      console.log(error);
       return "";
     }
   };

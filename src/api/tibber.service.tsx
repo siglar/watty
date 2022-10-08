@@ -8,6 +8,7 @@ import { TibberRoot } from "../models/tibber.models";
 const tibberUrl = "https://api.tibber.com/v1-beta/gql";
 
 export interface UseTibberEndpoint {
+  canLogin: (token: string) => Promise<boolean>;
   getTibberConsumption: (
     month: number,
     direction: Direction
@@ -17,6 +18,34 @@ export interface UseTibberEndpoint {
 export const useTibberEndpoint = (): UseTibberEndpoint => {
   const { tibberToken, homeId } = useAuthContext();
   const currentCursor = useRef<string | null>(null);
+
+  const canLogin = async (token: string) => {
+    const query = `{
+      viewer {
+        name
+      }
+    }`;
+
+    const result = (await axios({
+      url: tibberUrl,
+      method: "POST",
+      headers: {
+        Authorization: token,
+      },
+      data: {
+        query: query,
+      },
+    })) as AxiosResponse<TibberRoot>;
+
+    if (
+      result.data.errors?.some((e) =>
+        e.message.includes("No valid access token in request")
+      )
+    )
+      return false;
+
+    return true;
+  };
 
   const getTibberConsumption = async (
     month: number,
@@ -76,5 +105,5 @@ export const useTibberEndpoint = (): UseTibberEndpoint => {
     return result.data;
   };
 
-  return { getTibberConsumption };
+  return { getTibberConsumption, canLogin };
 };

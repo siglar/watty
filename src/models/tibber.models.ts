@@ -31,6 +31,18 @@ export interface Data {
   viewer: Viewer;
 }
 
+export interface Error {
+  message: string;
+  locations: Location[];
+  path: string[];
+  extensions: Extensions;
+}
+
+export interface Extensions {
+  code: string;
+}
+
 export interface TibberRoot {
   data: Data;
+  errors?: Error[];
 }

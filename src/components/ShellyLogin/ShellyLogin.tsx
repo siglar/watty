@@ -12,12 +12,15 @@ import { useShellyEndpoint } from "../../api/shelly.service";
 import { useAuthContext } from "../../context/auth.context";
 import { IconX } from "@tabler/icons";
 import logo from "../../assets/logo.jpg";
+import { useTibberEndpoint } from "../../api/tibber.service";
 
 const ShellyLogin: FC = () => {
   const { logIn } = useShellyEndpoint();
+  const { canLogin } = useTibberEndpoint();
   const { setLoggedIntoShelly, setTibberToken, setHomeId } = useAuthContext();
 
-  const [logInError, setLoginError] = useState<boolean>(false);
+  const [shellyLogInError, setShellyLogInError] = useState<boolean>(false);
+  const [tibberLogInError, setTibberLogInError] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
   const form = useForm({
@@ -44,18 +47,29 @@ const ShellyLogin: FC = () => {
     rememberHome: boolean
   ) => {
     setLoading(true);
+
+    const tibberLogin = await canLogin("Bearer " + token);
+    const shellyLogin = await logIn(email, password);
+
+    if (!tibberLogin) {
+      setTibberLogInError(true);
+    }
+
+    if (!shellyLogin) {
+      setShellyLogInError(true);
+    }
+
+    if (!tibberLogin || !shellyLogin) {
+      setLoading(false);
+      return;
+    }
+
     setTibberToken("Bearer " + token);
     setHomeId(home);
 
     if (rememberToken) localStorage.setItem("tibberToken", token);
     if (rememberHome) localStorage.setItem("tibberHome", home);
-
-    const loggedIn = await logIn(email, password);
-    if (loggedIn) setLoggedIntoShelly(true);
-    else {
-      setLoginError(true);
-      setLoading(false);
-    }
+    setLoggedIntoShelly(true);
   };
 
   return (
@@ -123,14 +137,25 @@ const ShellyLogin: FC = () => {
           />
         </div>
 
-        {logInError && (
+        {shellyLogInError && (
           <Notification
             className="notification-margin"
             icon={<IconX size={18} />}
             color="red"
             disallowClose
           >
-            Username or password is incorrect.
+            Shelly login is incorrect.
+          </Notification>
+        )}
+
+        {tibberLogInError && (
+          <Notification
+            className="notification-margin"
+            icon={<IconX size={18} />}
+            color="red"
+            disallowClose
+          >
+            Tibber token is incorrect.
           </Notification>
         )}
 
