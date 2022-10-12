@@ -1,4 +1,3 @@
-// import { format } from "date-fns";
 import { FC } from "react";
 import {
   Bar,
@@ -26,10 +25,6 @@ const ConsumptionChart: FC<ConsumptionChartProps> = (
   props: ConsumptionChartProps
 ) => {
   const { data } = props;
-
-  // const dateFormatter = (date: string) => {
-  //   return format(new Date(date), "dd.MMM");
-  // };
 
   const renderTooltip = (content: TooltipProps<ValueType, NameType>) => {
     if (content.payload && content.payload.length > 0) {
@@ -88,7 +83,6 @@ const ConsumptionChart: FC<ConsumptionChartProps> = (
     <div className="consumption-wrapper">
       <ResponsiveContainer width="100%" height={400}>
         <ComposedChart height={400} data={data}>
-          {/* <XAxis dataKey="date" tickFormatter={dateFormatter} /> */}
           <XAxis dataKey="date" />
           <Tooltip content={(content) => renderTooltip(content)} />
           <Legend
