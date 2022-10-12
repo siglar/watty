@@ -86,11 +86,10 @@ const ConsumptionChart: FC<ConsumptionChartProps> = (
           <XAxis dataKey="date" />
           <Tooltip content={(content) => renderTooltip(content)} />
           <Legend
-            align="left"
+            align="center"
             verticalAlign="top"
             formatter={(value) => value[0].toUpperCase() + value.slice(1)}
           />
-          <CartesianGrid stroke="#f5f5f5" />
           <Bar dataKey="consumption" barSize={20} fill="#413ea0" />
           <Line type="monotone" dataKey="cost" stroke="#ff7300" />
         </ComposedChart>
