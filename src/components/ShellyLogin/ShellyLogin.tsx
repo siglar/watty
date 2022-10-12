@@ -74,7 +74,14 @@ const ShellyLogin: FC = () => {
 
   return (
     <div className="login-wrapper">
-      <img src={logo} alt="Watty logo" />
+      <div className="login-header">
+        <img src={logo} alt="Watty logo" />
+        <article>
+          <p>Welcome to Watty</p>
+          <p>Please log in.</p>
+        </article>
+      </div>
+
       <form
         onSubmit={form.onSubmit((values) =>
           formSubmit(
@@ -88,29 +95,29 @@ const ShellyLogin: FC = () => {
         )}
       >
         <TextInput
+          className="text-input"
           autoComplete="email"
           type="email"
           required
-          label="Shelly email"
-          placeholder="Email used to log into Shelly app"
+          placeholder="Shelly email"
           {...form.getInputProps("email")}
         />
 
         <TextInput
+          className="text-input"
           autoComplete="current-password"
           type="password"
           required
-          label="Shelly password"
-          placeholder="Password used to log into Shelly app"
+          placeholder="Shelly password"
           {...form.getInputProps("password")}
         />
 
         <TextInput
+          className="text-input"
           autoComplete="on"
           type="password"
           required
-          label="Tibber token"
-          placeholder="Token retrieved from Tibber"
+          placeholder="Tibber token"
           {...form.getInputProps("token")}
         />
 
@@ -122,11 +129,11 @@ const ShellyLogin: FC = () => {
         </div>
 
         <TextInput
+          className="text-input"
           autoComplete="on"
           type="text"
           required
-          label="Tibber home"
-          placeholder="Home ID retrieved from Tibber"
+          placeholder="Tibber home ID"
           {...form.getInputProps("home")}
         />
 
@@ -160,8 +167,8 @@ const ShellyLogin: FC = () => {
         )}
 
         <Group position="right" mt="md">
-          <Button loading={loading} type="submit">
-            Submit
+          <Button variant="default" loading={loading} type="submit">
+            Log in
           </Button>
         </Group>
       </form>

@@ -1,4 +1,4 @@
-import { ActionIcon, Button } from "@mantine/core";
+import { ActionIcon } from "@mantine/core";
 import { FC, useState } from "react";
 import ShellyLogin from "../components/ShellyLogin/ShellyLogin";
 import { useAuthContext } from "../context/auth.context";
