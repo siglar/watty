@@ -95,6 +95,9 @@ const ShellyLogin: FC = () => {
         )}
       >
         <TextInput
+          size="md"
+          label="Shelly email"
+          aria-label="Shelly email"
           className="text-input"
           autoComplete="email"
           type="email"
@@ -104,6 +107,9 @@ const ShellyLogin: FC = () => {
         />
 
         <TextInput
+          size="md"
+          label="Shelly password"
+          aria-label="Shelly password"
           className="text-input"
           autoComplete="current-password"
           type="password"
@@ -113,6 +119,9 @@ const ShellyLogin: FC = () => {
         />
 
         <TextInput
+          size="md"
+          label="Tibber token"
+          aria-label="Tibber token"
           className="text-input"
           autoComplete="on"
           type="password"
@@ -129,6 +138,9 @@ const ShellyLogin: FC = () => {
         </div>
 
         <TextInput
+          size="md"
+          label="Tibber home ID"
+          aria-label="Tibber home ID"
           className="text-input"
           autoComplete="on"
           type="text"
