@@ -1,6 +1,6 @@
 img {
-    max-height: 10vh;
-    max-width: 10vh;
+    height: 100px;
+    width: 100px;
 }
 
 .login-wrapper{
@@ -12,7 +12,8 @@ img {
 
 .login-header{
     display: flex;
-    justify-content: space-around;
+    max-height: 100px;
+    gap: 1rem; 
 }
 
 .notification-margin{

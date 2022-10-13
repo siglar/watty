@@ -8,16 +8,17 @@ import {
 } from "@mantine/core";
 import "./ShellyLogin.css";
 import { useForm } from "@mantine/form";
-import { useShellyEndpoint } from "../../api/shelly.service";
 import { useAuthContext } from "../../context/auth.context";
 import { IconX } from "@tabler/icons";
 import logo from "../../assets/logo.jpg";
 import { useTibberEndpoint } from "../../api/tibber.service";
+import { useShellyEndpoint } from "../../api/shelly.service";
 
 const ShellyLogin: FC = () => {
-  const { logIn } = useShellyEndpoint();
-  const { canLogin } = useTibberEndpoint();
-  const { setLoggedIntoShelly, setTibberToken, setHomeId } = useAuthContext();
+  const { canLogin: canLoginShelly } = useShellyEndpoint();
+  const { canLogin: canLoginTibber } = useTibberEndpoint();
+  const { setLoggedIntoShelly, setTibberToken, setShellyToken, setHomeId } =
+    useAuthContext();
 
   const [shellyLogInError, setShellyLogInError] = useState<boolean>(false);
   const [tibberLogInError, setTibberLogInError] = useState<boolean>(false);
@@ -25,38 +26,36 @@ const ShellyLogin: FC = () => {
 
   const form = useForm({
     initialValues: {
-      email: "",
-      password: "",
-      token: localStorage.getItem("tibberToken") ?? "",
+      shellyToken: localStorage.getItem("shellyToken") ?? "",
+      tibberToken: localStorage.getItem("tibberToken") ?? "",
       home: localStorage.getItem("tibberHome") ?? "",
-      rememberToken: false,
+      rememberShellyToken: false,
+      rememberTibberToken: false,
       rememberHome: false,
-    },
-
-    validate: {
-      email: (value) => (/^\S+@\S+$/.test(value) ? null : "Invalid email"),
     },
   });
 
   const formSubmit = async (
-    email: string,
-    password: string,
-    token: string,
+    shellyToken: string,
+    tibberToken: string,
     home: string,
-    rememberToken: boolean,
+    rememberShellyToken: boolean,
+    rememberTibberToken: boolean,
     rememberHome: boolean
   ) => {
     setLoading(true);
 
-    const tibberLogin = await canLogin("Bearer " + token);
-    const shellyLogin = await logIn(email, password);
-
-    if (!tibberLogin) {
-      setTibberLogInError(true);
-    }
+    const [shellyLogin, tibberLogin] = await Promise.all([
+      canLoginShelly(shellyToken),
+      canLoginTibber("Bearer " + tibberToken),
+    ]);
 
     if (!shellyLogin) {
       setShellyLogInError(true);
+    }
+
+    if (!tibberLogin) {
+      setTibberLogInError(true);
     }
 
     if (!tibberLogin || !shellyLogin) {
@@ -64,11 +63,14 @@ const ShellyLogin: FC = () => {
       return;
     }
 
-    setTibberToken("Bearer " + token);
+    setShellyToken(shellyToken);
+    setTibberToken("Bearer " + tibberToken);
     setHomeId(home);
 
-    if (rememberToken) localStorage.setItem("tibberToken", token);
+    if (rememberShellyToken) localStorage.setItem("shellyToken", shellyToken);
+    if (rememberTibberToken) localStorage.setItem("tibberToken", tibberToken);
     if (rememberHome) localStorage.setItem("tibberHome", home);
+
     setLoggedIntoShelly(true);
   };
 
@@ -85,38 +87,33 @@ const ShellyLogin: FC = () => {
       <form
         onSubmit={form.onSubmit((values) =>
           formSubmit(
-            values.email,
-            values.password,
-            values.token,
+            values.shellyToken,
+            values.tibberToken,
             values.home,
-            values.rememberToken,
+            values.rememberShellyToken,
+            values.rememberTibberToken,
             values.rememberHome
           )
         )}
       >
         <TextInput
           size="md"
-          label="Shelly email"
-          aria-label="Shelly email"
+          label="Shelly token"
+          aria-label="Shelly token"
           className="text-input"
-          autoComplete="email"
-          type="email"
-          required
-          placeholder="Shelly email"
-          {...form.getInputProps("email")}
-        />
-
-        <TextInput
-          size="md"
-          label="Shelly password"
-          aria-label="Shelly password"
-          className="text-input"
-          autoComplete="current-password"
+          autoComplete="on"
           type="password"
           required
-          placeholder="Shelly password"
-          {...form.getInputProps("password")}
+          placeholder="Shelly token"
+          {...form.getInputProps("shellyToken")}
         />
+
+        <div className="tibber-checkbox">
+          <Checkbox
+            label="Remember Shelly token"
+            {...form.getInputProps("rememberShellyToken")}
+          />
+        </div>
 
         <TextInput
           size="md"
@@ -127,13 +124,13 @@ const ShellyLogin: FC = () => {
           type="password"
           required
           placeholder="Tibber token"
-          {...form.getInputProps("token")}
+          {...form.getInputProps("tibberToken")}
         />
 
         <div className="tibber-checkbox">
           <Checkbox
-            label="Remember token"
-            {...form.getInputProps("rememberToken")}
+            label="Remember Tibber token"
+            {...form.getInputProps("rememberTibberToken")}
           />
         </div>
 
