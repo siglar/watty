@@ -87,37 +87,35 @@ const ConsumptionChart: FC<ConsumptionChartProps> = (
   };
 
   return (
-    <div className="consumption-wrapper">
-      <ResponsiveContainer width="100%" height={"100%"}>
-        <ComposedChart height={400} data={data}>
-          <XAxis dataKey="date" />
-          <Tooltip content={(content) => renderTooltip(content)} />
+    <ResponsiveContainer width="100%" height={"100%"}>
+      <ComposedChart height={400} data={data}>
+        <XAxis dataKey="date" />
+        <Tooltip content={(content) => renderTooltip(content)} />
 
-          <Bar
-            hide={!showConsumption}
-            dataKey="consumption"
-            barSize={20}
-            fill="#413ea0"
-          >
-            {!showCost && (
-              <LabelList
-                dataKey="consumption"
-                position="top"
-                formatter={labelFormatter}
-              />
-            )}
-          </Bar>
-          <Line
-            hide={!showCost}
-            type="monotone"
-            dataKey="cost"
-            stroke="#ff7300"
-            dot={showConsumption ? undefined : (CustomDot as any)}
-            activeDot={showConsumption}
-          />
-        </ComposedChart>
-      </ResponsiveContainer>
-    </div>
+        <Bar
+          hide={!showConsumption}
+          dataKey="consumption"
+          barSize={20}
+          fill="#413ea0"
+        >
+          {!showCost && (
+            <LabelList
+              dataKey="consumption"
+              position="top"
+              formatter={labelFormatter}
+            />
+          )}
+        </Bar>
+        <Line
+          hide={!showCost}
+          type="monotone"
+          dataKey="cost"
+          stroke="#ff7300"
+          dot={showConsumption ? undefined : (CustomDot as any)}
+          activeDot={showConsumption}
+        />
+      </ComposedChart>
+    </ResponsiveContainer>
   );
 };
 

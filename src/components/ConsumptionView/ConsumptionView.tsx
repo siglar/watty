@@ -31,7 +31,7 @@ const ConsumptionView: FC<ConsumptionViewProps> = (
 
   const dayPrices = tibberData.data.viewer.home.consumption.nodes.map((n) => {
     return {
-      date: format(parse("", "", new Date(n.to)), "dd.MMM"),
+      date: format(new Date(n.to), "dd.MMM"),
       cost: n.unitPrice,
     };
   });
@@ -39,7 +39,7 @@ const ConsumptionView: FC<ConsumptionViewProps> = (
   const chartData: ChartData[] = shellyConsumption.data.history
     .filter((h) => h.consumption > 0)
     .map((h) => {
-      const shellyDate = format(parse("", "", new Date(h.datetime)), "dd.MMM");
+      const shellyDate = format(new Date(h.datetime), "dd.MMM");
 
       const dayPrice =
         dayPrices.find((dp) => dp.date === shellyDate)?.cost ?? averagePrice;
@@ -71,11 +71,13 @@ const ConsumptionView: FC<ConsumptionViewProps> = (
         />
       </div>
 
-      <ConsumptionChart
-        data={chartData}
-        showConsumption={showConsumption}
-        showCost={showCost}
-      />
+      <div className="consumption-wrapper">
+        <ConsumptionChart
+          data={chartData}
+          showConsumption={showConsumption}
+          showCost={showCost}
+        />
+      </div>
     </>
   );
 };
