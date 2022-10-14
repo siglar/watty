@@ -1,8 +1,10 @@
-import { FC } from "react";
+import { Switch } from "@mantine/core";
+import React from "react";
+import { FC, useState } from "react";
 import {
   Bar,
   ComposedChart,
-  Legend,
+  LabelList,
   Line,
   ResponsiveContainer,
   Tooltip,
@@ -15,6 +17,7 @@ import {
 } from "recharts/types/component/DefaultTooltipContent";
 import { ChartData } from "../../models/chart.models";
 import "./ConsumptionChart.css";
+import CustomDot from "./CustomDot";
 
 interface ConsumptionChartProps {
   data: ChartData[];
@@ -24,6 +27,9 @@ const ConsumptionChart: FC<ConsumptionChartProps> = (
   props: ConsumptionChartProps
 ) => {
   const { data } = props;
+
+  const [showCost, setShowCost] = useState<boolean>(true);
+  const [showConsumption, setShowConsumption] = useState<boolean>(false);
 
   const renderTooltip = (content: TooltipProps<ValueType, NameType>) => {
     if (content.payload && content.payload.length > 0) {
@@ -79,22 +85,46 @@ const ConsumptionChart: FC<ConsumptionChartProps> = (
   };
 
   return (
-    <div className="consumption-wrapper">
-      <ResponsiveContainer width="100%" height={400}>
-        <ComposedChart height={400} data={data}>
-          <XAxis dataKey="date" />
-          <Tooltip content={(content) => renderTooltip(content)} />
-          <Legend
-            align="center"
-            verticalAlign="top"
-            formatter={(value) => value[0].toUpperCase() + value.slice(1)}
-          />
-          <Bar dataKey="consumption" barSize={20} fill="#413ea0" />
-          <Line type="monotone" dataKey="cost" stroke="#ff7300" />
-        </ComposedChart>
-      </ResponsiveContainer>
-    </div>
+    <>
+      <div className="consumption-header">
+        <Switch
+          label="Show cost (kr)"
+          checked={showCost}
+          onChange={(e) => setShowCost(e.target.checked)}
+        />
+        <Switch
+          label="Show consumption (kW)"
+          checked={showConsumption}
+          onChange={(e) => setShowConsumption(e.target.checked)}
+        />
+      </div>
+      <div className="consumption-wrapper">
+        <ResponsiveContainer width="100%" height={400}>
+          <ComposedChart height={400} data={data}>
+            <XAxis dataKey="date" />
+            <Tooltip content={(content) => renderTooltip(content)} />
+
+            <Bar
+              hide={!showConsumption}
+              dataKey="consumption"
+              barSize={20}
+              fill="#413ea0"
+            >
+              {!showCost && <LabelList dataKey="consumption" position="top" />}
+            </Bar>
+            <Line
+              hide={!showCost}
+              type="monotone"
+              dataKey="cost"
+              stroke="#ff7300"
+              dot={CustomDot as any}
+              activeDot={false}
+            />
+          </ComposedChart>
+        </ResponsiveContainer>
+      </div>
+    </>
   );
 };
 
-export default ConsumptionChart;
+export default React.memo(ConsumptionChart);

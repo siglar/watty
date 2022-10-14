@@ -1,5 +1,11 @@
-import { Button } from "@mantine/core";
-import { IconArrowBack, IconRefresh } from "@tabler/icons";
+import { Button, List, ThemeIcon, Title } from "@mantine/core";
+import {
+  IconArrowBack,
+  IconCurrencyKroneDanish,
+  IconDevices,
+  IconRefresh,
+  IconSun,
+} from "@tabler/icons";
 import { FC } from "react";
 import { useAuthContext } from "../../context/auth.context";
 import ConsumptionChart from "../ConsumptionChart/ConsumptionChart";
@@ -71,11 +77,38 @@ const ConsumptionView: FC<ConsumptionViewProps> = (
         </Button>
       </div>
 
-      <article>
-        <p>Consumed kilowatts: {consumedKw} kW</p>
-        <p>Average kilowatt price: {averagePrice.toFixed(2)} kr</p>
-        <p>Price for device {priceForDevice.toFixed(2)} kr</p>
-      </article>
+      <div>
+        <Title order={4}>This month</Title>
+        <List title="This month" spacing="xs" size="sm">
+          <List.Item
+            icon={
+              <ThemeIcon color="blue" size={24} radius="md">
+                <IconSun size={16} />
+              </ThemeIcon>
+            }
+          >
+            Consumed: <b>{consumedKw} kW</b>
+          </List.Item>
+          <List.Item
+            icon={
+              <ThemeIcon color="blue" size={24} radius="md">
+                <IconCurrencyKroneDanish size={16} />
+              </ThemeIcon>
+            }
+          >
+            Average kilowatt price: <b>{averagePrice.toFixed(2)} kr</b>
+          </List.Item>
+          <List.Item
+            icon={
+              <ThemeIcon color="blue" size={24} radius="md">
+                <IconDevices size={16} />
+              </ThemeIcon>
+            }
+          >
+            Price for device <b>{priceForDevice.toFixed(2)} kr</b>
+          </List.Item>
+        </List>
+      </div>
 
       <ConsumptionChart data={chartData} />
     </>
