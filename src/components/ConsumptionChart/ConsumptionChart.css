@@ -1,11 +1,6 @@
 .consumption-wrapper {
-  height: 400px;
-  width: 100%
-}
-
-.consumption-header{
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  height: 100%;
   width: 100%;
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
 }

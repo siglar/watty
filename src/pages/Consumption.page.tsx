@@ -19,28 +19,15 @@ const ConsumptionPage: FC<ConsumptionPageProps> = (
   const { getConsumption } = useShellyEndpoint();
   const { getTibberConsumption } = useTibberEndpoint();
 
-  const {
-    data: shellyConsumption,
-    refetch: refetchShelly,
-    isRefetching: shellyFetching,
-  } = useQuery(
+  const { data: shellyConsumption, isRefetching: shellyFetching } = useQuery(
     ["SHELLY, CONSUMPTION", month],
     async () => await getConsumption(month)
   );
 
-  const {
-    data: tibberData,
-    refetch: refetchTibber,
-    isRefetching: tibberFetching,
-  } = useQuery(
+  const { data: tibberData, isRefetching: tibberFetching } = useQuery(
     ["TIBBER, CONSUMPTION", month],
     async () => await getTibberConsumption(month, direction)
   );
-
-  const refetch = () => {
-    refetchShelly();
-    refetchTibber();
-  };
 
   if (!shellyConsumption || !tibberData) return <Loader />;
 
@@ -57,7 +44,6 @@ const ConsumptionPage: FC<ConsumptionPageProps> = (
       <ConsumptionView
         tibberData={tibberData}
         shellyConsumption={shellyConsumption}
-        refetch={refetch}
       />
     </>
   );

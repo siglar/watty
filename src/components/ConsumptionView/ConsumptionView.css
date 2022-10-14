@@ -1,15 +1,10 @@
-.login-wrapper {
+.options-container {
     display: flex;
     flex-direction: column;
-    max-width: 720px;
-    width: 80vw;
+    justify-content: flex-start;
+    width: 100%;
+    gap: 2rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
 }
 
-.button-row {
-    display: flex;
-    align-items: center;    
-}
-
-.button-row p {
-    margin: 0 1ch 0 1ch
-}

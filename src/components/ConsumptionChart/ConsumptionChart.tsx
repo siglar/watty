@@ -1,6 +1,5 @@
-import { Switch } from "@mantine/core";
 import React from "react";
-import { FC, useState } from "react";
+import { FC } from "react";
 import {
   Bar,
   ComposedChart,
@@ -21,15 +20,14 @@ import CustomDot from "./CustomDot";
 
 interface ConsumptionChartProps {
   data: ChartData[];
+  showCost: boolean;
+  showConsumption: boolean;
 }
 
 const ConsumptionChart: FC<ConsumptionChartProps> = (
   props: ConsumptionChartProps
 ) => {
-  const { data } = props;
-
-  const [showCost, setShowCost] = useState<boolean>(true);
-  const [showConsumption, setShowConsumption] = useState<boolean>(false);
+  const { data, showConsumption, showCost } = props;
 
   const renderTooltip = (content: TooltipProps<ValueType, NameType>) => {
     if (content.payload && content.payload.length > 0) {
@@ -85,45 +83,31 @@ const ConsumptionChart: FC<ConsumptionChartProps> = (
   };
 
   return (
-    <>
-      <div className="consumption-header">
-        <Switch
-          label="Show cost (kr)"
-          checked={showCost}
-          onChange={(e) => setShowCost(e.target.checked)}
-        />
-        <Switch
-          label="Show consumption (kW)"
-          checked={showConsumption}
-          onChange={(e) => setShowConsumption(e.target.checked)}
-        />
-      </div>
-      <div className="consumption-wrapper">
-        <ResponsiveContainer width="100%" height={400}>
-          <ComposedChart height={400} data={data}>
-            <XAxis dataKey="date" />
-            <Tooltip content={(content) => renderTooltip(content)} />
+    <div className="consumption-wrapper">
+      <ResponsiveContainer width="100%" height={"100%"}>
+        <ComposedChart height={400} data={data}>
+          <XAxis dataKey="date" />
+          <Tooltip content={(content) => renderTooltip(content)} />
 
-            <Bar
-              hide={!showConsumption}
-              dataKey="consumption"
-              barSize={20}
-              fill="#413ea0"
-            >
-              {!showCost && <LabelList dataKey="consumption" position="top" />}
-            </Bar>
-            <Line
-              hide={!showCost}
-              type="monotone"
-              dataKey="cost"
-              stroke="#ff7300"
-              dot={CustomDot as any}
-              activeDot={false}
-            />
-          </ComposedChart>
-        </ResponsiveContainer>
-      </div>
-    </>
+          <Bar
+            hide={!showConsumption}
+            dataKey="consumption"
+            barSize={20}
+            fill="#413ea0"
+          >
+            {!showCost && <LabelList dataKey="consumption" position="top" />}
+          </Bar>
+          <Line
+            hide={!showCost}
+            type="monotone"
+            dataKey="cost"
+            stroke="#ff7300"
+            dot={CustomDot as any}
+            activeDot={false}
+          />
+        </ComposedChart>
+      </ResponsiveContainer>
+    </div>
   );
 };
 

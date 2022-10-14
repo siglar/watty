@@ -1,13 +1,4 @@
-import { Button, List, ThemeIcon, Title } from "@mantine/core";
-import {
-  IconArrowBack,
-  IconCurrencyKroneDanish,
-  IconDevices,
-  IconRefresh,
-  IconSun,
-} from "@tabler/icons";
-import { FC } from "react";
-import { useAuthContext } from "../../context/auth.context";
+import { FC, useState } from "react";
 import ConsumptionChart from "../ConsumptionChart/ConsumptionChart";
 import "./ConsumptionView.css";
 import { format } from "date-fns";
@@ -15,19 +6,22 @@ import { ShellyRoot } from "../../models/shelly.models";
 import { TibberRoot } from "../../models/tibber.models";
 import { calculateAveragePrice } from "../../helpers/tibber.helper";
 import { ChartData } from "../../models/chart.models";
+import SummaryList from "../SummaryList/SummaryList";
+import NavigationRow from "../NavigationRow/NavigationRow";
+import ConsumptionHeader from "../ConsumptionHeader/ConsumptionHeader";
 
 interface ConsumptionViewProps {
   shellyConsumption: ShellyRoot;
   tibberData: TibberRoot;
-  refetch: () => void;
 }
 
 const ConsumptionView: FC<ConsumptionViewProps> = (
   props: ConsumptionViewProps
 ) => {
-  const { shellyConsumption, tibberData, refetch } = props;
+  const { shellyConsumption, tibberData } = props;
 
-  const { setLoggedIntoShelly } = useAuthContext();
+  const [showCost, setShowCost] = useState<boolean>(true);
+  const [showConsumption, setShowConsumption] = useState<boolean>(false);
 
   const averagePrice = calculateAveragePrice(tibberData);
 
@@ -60,57 +54,28 @@ const ConsumptionView: FC<ConsumptionViewProps> = (
 
   return (
     <>
-      <div className="button-row">
-        <Button
-          onClick={() => setLoggedIntoShelly(false)}
-          leftIcon={<IconArrowBack />}
-          variant="subtle"
-        >
-          Back to login
-        </Button>
-        <Button
-          onClick={() => refetch()}
-          leftIcon={<IconRefresh />}
-          variant="subtle"
-        >
-          Refresh
-        </Button>
+      <div className="options-container">
+        <NavigationRow />
+
+        <SummaryList
+          averagePrice={averagePrice}
+          consumedKw={consumedKw}
+          priceForDevice={priceForDevice}
+        />
+
+        <ConsumptionHeader
+          setShowConsumption={setShowConsumption}
+          setShowCost={setShowCost}
+          showConsumption={showConsumption}
+          showCost={showCost}
+        />
       </div>
 
-      <div>
-        <Title order={4}>This month</Title>
-        <List title="This month" spacing="xs" size="sm">
-          <List.Item
-            icon={
-              <ThemeIcon color="blue" size={24} radius="md">
-                <IconSun size={16} />
-              </ThemeIcon>
-            }
-          >
-            Consumed: <b>{consumedKw} kW</b>
-          </List.Item>
-          <List.Item
-            icon={
-              <ThemeIcon color="blue" size={24} radius="md">
-                <IconCurrencyKroneDanish size={16} />
-              </ThemeIcon>
-            }
-          >
-            Average kilowatt price: <b>{averagePrice.toFixed(2)} kr</b>
-          </List.Item>
-          <List.Item
-            icon={
-              <ThemeIcon color="blue" size={24} radius="md">
-                <IconDevices size={16} />
-              </ThemeIcon>
-            }
-          >
-            Price for device <b>{priceForDevice.toFixed(2)} kr</b>
-          </List.Item>
-        </List>
-      </div>
-
-      <ConsumptionChart data={chartData} />
+      <ConsumptionChart
+        data={chartData}
+        showConsumption={showConsumption}
+        showCost={showCost}
+      />
     </>
   );
 };
