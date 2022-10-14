@@ -9,16 +9,18 @@ import { ChartData } from "../../models/chart.models";
 import SummaryList from "../SummaryList/SummaryList";
 import NavigationRow from "../NavigationRow/NavigationRow";
 import ConsumptionHeader from "../ConsumptionHeader/ConsumptionHeader";
+import { LoadingOverlay } from "@mantine/core";
 
 interface ConsumptionViewProps {
   shellyConsumption: ShellyRoot;
   tibberData: TibberRoot;
+  loading: boolean;
 }
 
 const ConsumptionView: FC<ConsumptionViewProps> = (
   props: ConsumptionViewProps
 ) => {
-  const { shellyConsumption, tibberData } = props;
+  const { shellyConsumption, tibberData, loading } = props;
 
   const [showCost, setShowCost] = useState<boolean>(true);
   const [showConsumption, setShowConsumption] = useState<boolean>(false);
@@ -55,6 +57,7 @@ const ConsumptionView: FC<ConsumptionViewProps> = (
   return (
     <>
       <div className="options-container">
+        <LoadingOverlay visible={loading} overlayBlur={1} />
         <NavigationRow />
 
         <SummaryList

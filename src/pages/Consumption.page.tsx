@@ -1,4 +1,4 @@
-import { Loader, LoadingOverlay } from "@mantine/core";
+import { Loader } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import { FC } from "react";
 import { useShellyEndpoint } from "../api/shelly.service";
@@ -19,14 +19,20 @@ const ConsumptionPage: FC<ConsumptionPageProps> = (
   const { getConsumption } = useShellyEndpoint();
   const { getTibberConsumption } = useTibberEndpoint();
 
-  const { data: shellyConsumption, isRefetching: shellyFetching } = useQuery(
+  const { data: shellyConsumption, isRefetching: shellyLoading } = useQuery(
     ["SHELLY, CONSUMPTION", month],
-    async () => await getConsumption(month)
+    async () => await getConsumption(month),
+    {
+      keepPreviousData: true,
+    }
   );
 
-  const { data: tibberData, isRefetching: tibberFetching } = useQuery(
+  const { data: tibberData, isRefetching: tibberLoading } = useQuery(
     ["TIBBER, CONSUMPTION", month],
-    async () => await getTibberConsumption(month, direction)
+    async () => await getTibberConsumption(month, direction),
+    {
+      keepPreviousData: true,
+    }
   );
 
   if (!shellyConsumption || !tibberData) return <Loader />;
@@ -36,12 +42,8 @@ const ConsumptionPage: FC<ConsumptionPageProps> = (
 
   return (
     <>
-      <LoadingOverlay
-        visible={shellyFetching || tibberFetching}
-        overlayBlur={1}
-      />
-
       <ConsumptionView
+        loading={shellyLoading || tibberLoading}
         tibberData={tibberData}
         shellyConsumption={shellyConsumption}
       />
