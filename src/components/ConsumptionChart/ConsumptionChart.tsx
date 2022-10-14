@@ -112,8 +112,8 @@ const ConsumptionChart: FC<ConsumptionChartProps> = (
             type="monotone"
             dataKey="cost"
             stroke="#ff7300"
-            dot={CustomDot as any}
-            activeDot={false}
+            dot={showConsumption ? undefined : (CustomDot as any)}
+            activeDot={showConsumption}
           />
         </ComposedChart>
       </ResponsiveContainer>
