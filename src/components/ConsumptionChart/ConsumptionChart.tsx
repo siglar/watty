@@ -82,6 +82,10 @@ const ConsumptionChart: FC<ConsumptionChartProps> = (
     return null;
   };
 
+  const labelFormatter = (value: number) => {
+    return value.toFixed(0);
+  };
+
   return (
     <div className="consumption-wrapper">
       <ResponsiveContainer width="100%" height={"100%"}>
@@ -95,7 +99,13 @@ const ConsumptionChart: FC<ConsumptionChartProps> = (
             barSize={20}
             fill="#413ea0"
           >
-            {!showCost && <LabelList dataKey="consumption" position="top" />}
+            {!showCost && (
+              <LabelList
+                dataKey="consumption"
+                position="top"
+                formatter={labelFormatter}
+              />
+            )}
           </Bar>
           <Line
             hide={!showCost}
