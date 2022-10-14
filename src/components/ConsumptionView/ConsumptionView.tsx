@@ -1,7 +1,7 @@
 import { FC, useState } from "react";
 import ConsumptionChart from "../ConsumptionChart/ConsumptionChart";
 import "./ConsumptionView.css";
-import { format } from "date-fns";
+import { format, parse } from "date-fns";
 import { ShellyRoot } from "../../models/shelly.models";
 import { TibberRoot } from "../../models/tibber.models";
 import { calculateAveragePrice } from "../../helpers/tibber.helper";
@@ -31,7 +31,7 @@ const ConsumptionView: FC<ConsumptionViewProps> = (
 
   const dayPrices = tibberData.data.viewer.home.consumption.nodes.map((n) => {
     return {
-      date: format(new Date(n.to), "dd.MMM"),
+      date: format(parse("", "", new Date(n.to)), "dd.MMM"),
       cost: n.unitPrice,
     };
   });
@@ -39,7 +39,7 @@ const ConsumptionView: FC<ConsumptionViewProps> = (
   const chartData: ChartData[] = shellyConsumption.data.history
     .filter((h) => h.consumption > 0)
     .map((h) => {
-      const shellyDate = format(new Date(h.datetime), "dd.MMM");
+      const shellyDate = format(parse("", "", new Date(h.datetime)), "dd.MMM");
 
       const dayPrice =
         dayPrices.find((dp) => dp.date === shellyDate)?.cost ?? averagePrice;

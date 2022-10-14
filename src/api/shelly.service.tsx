@@ -1,7 +1,7 @@
 import { ShellyRoot } from "../models/shelly.models";
 import { useAuthContext } from "../context/auth.context";
 import axios from "axios";
-import { format } from "date-fns";
+import { format, parse } from "date-fns";
 
 export const shellyUrl = "https://shelly-44-eu.shelly.cloud";
 
@@ -17,14 +17,14 @@ export const useShellyEndpoint = (): UseShellyEndpoint => {
     const date = new Date();
     var firstDay = new Date(date.getFullYear(), month, 1);
 
-    return format(firstDay, "yyyy-MM-dd");
+    return format(parse("", "", firstDay), "yyyy-MM-dd");
   };
 
   const getLastDay = (month: number) => {
     const date = new Date();
     var lastDay = new Date(date.getFullYear(), month + 1, 0);
 
-    return format(lastDay, "yyyy-MM-dd");
+    return format(parse("", "", lastDay), "yyyy-MM-dd");
   };
 
   const getConsumption = async (month: number): Promise<ShellyRoot> => {
