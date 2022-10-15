@@ -21,10 +21,13 @@ export interface PageInfo {
 export interface Home {
   timeZone: string;
   consumption: Consumption;
+  address: Address;
+  id: string;
 }
 
 export interface Viewer {
   home: Home;
+  homes: Home[];
 }
 
 export interface Data {
@@ -45,4 +48,13 @@ export interface Extensions {
 export interface TibberRoot {
   data: Data;
   errors?: Error[];
+}
+
+export interface Address {
+  address1: string;
+}
+
+export interface HomeId {
+  address: string;
+  id: string;
 }

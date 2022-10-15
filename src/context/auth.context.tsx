@@ -7,6 +7,7 @@ import {
   useContext,
   useState,
 } from "react";
+import { HomeId } from "../models/tibber.models";
 
 type ProviderProps = {
   children: ReactNode;
@@ -40,9 +41,18 @@ export const AuthContextProvider: FC<ProviderProps> = (
   props: ProviderProps
 ) => {
   const [loggedIntoShelly, setLoggedIntoShelly] = useState<boolean>(false);
-  const [shellyToken, setShellyToken] = useState<string>("");
-  const [tibberToken, setTibberToken] = useState<string>("");
-  const [homeId, setHomeId] = useState<string>("");
+  const [shellyToken, setShellyToken] = useState<string>(
+    localStorage.getItem("shellyToken") ?? ""
+  );
+  const [tibberToken, setTibberToken] = useState<string>(
+    localStorage.getItem("tibberToken") ?? ""
+  );
+
+  const tibberHome = JSON.parse(
+    localStorage.getItem("tibberHome") ?? "{}"
+  ) as HomeId;
+
+  const [homeId, setHomeId] = useState<string>(tibberHome?.id ?? "");
 
   return (
     <AuthContext.Provider

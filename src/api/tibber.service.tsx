@@ -3,11 +3,12 @@ import { useRef } from "react";
 import { useAuthContext } from "../context/auth.context";
 import { Direction } from "../enums/direction.enum";
 import { getDays } from "../helpers/tibber.helper";
-import { TibberRoot } from "../models/tibber.models";
+import { Home, TibberRoot } from "../models/tibber.models";
 
 const tibberUrl = "https://api.tibber.com/v1-beta/gql";
 
 export interface UseTibberEndpoint {
+  getHomes: (token: string) => Promise<Home[]>;
   canLogin: (token: string) => Promise<boolean>;
   getTibberConsumption: (
     month: number,
@@ -18,6 +19,32 @@ export interface UseTibberEndpoint {
 export const useTibberEndpoint = (): UseTibberEndpoint => {
   const { tibberToken, homeId } = useAuthContext();
   const currentCursor = useRef<string | null>(null);
+
+  const getHomes = async (token: string) => {
+    const query = `{
+      viewer {
+        homes {
+          address {
+            address1
+          }
+          id
+        }
+      }
+    }`;
+
+    const result = (await axios({
+      url: tibberUrl,
+      method: "POST",
+      headers: {
+        Authorization: token,
+      },
+      data: {
+        query: query,
+      },
+    })) as AxiosResponse<TibberRoot>;
+
+    return result.data.data.viewer.homes.map((home) => home);
+  };
 
   const canLogin = async (token: string) => {
     const query = `{
@@ -99,11 +126,13 @@ export const useTibberEndpoint = (): UseTibberEndpoint => {
       },
     })) as AxiosResponse<TibberRoot>;
 
-    currentCursor.current =
-      result.data.data.viewer.home.consumption.pageInfo.startCursor;
+    if (result.data.data.viewer.home.consumption) {
+      currentCursor.current =
+        result.data.data.viewer.home.consumption.pageInfo.startCursor;
+    }
 
     return result.data;
   };
 
-  return { getTibberConsumption, canLogin };
+  return { getHomes, getTibberConsumption, canLogin };
 };

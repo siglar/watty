@@ -5,6 +5,8 @@ import {
   Group,
   Notification,
   Checkbox,
+  Select,
+  Loader,
 } from "@mantine/core";
 import "./ShellyLogin.css";
 import { useForm } from "@mantine/form";
@@ -13,22 +15,72 @@ import { IconX } from "@tabler/icons";
 import logo from "../../assets/logo.jpg";
 import { useTibberEndpoint } from "../../api/tibber.service";
 import { useShellyEndpoint } from "../../api/shelly.service";
+import { useQuery } from "@tanstack/react-query";
+import { HomeId } from "../../models/tibber.models";
 
 const ShellyLogin: FC = () => {
   const { canLogin: canLoginShelly } = useShellyEndpoint();
-  const { canLogin: canLoginTibber } = useTibberEndpoint();
-  const { setLoggedIntoShelly, setTibberToken, setShellyToken, setHomeId } =
-    useAuthContext();
+  const { canLogin: canLoginTibber, getHomes } = useTibberEndpoint();
+  const {
+    setLoggedIntoShelly,
+    setTibberToken,
+    tibberToken,
+    setShellyToken,
+    setHomeId,
+    homeId,
+  } = useAuthContext();
 
   const [shellyLogInError, setShellyLogInError] = useState<boolean>(false);
   const [tibberLogInError, setTibberLogInError] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
+  const tibberHome = JSON.parse(
+    localStorage.getItem("tibberHome") ?? "{}"
+  ) as HomeId;
+
+  const [selectedHome] = useState<string>(tibberHome?.address ?? "");
+
+  const { data: userHomes, isLoading: homesLoading } = useQuery(
+    ["TIBBER", "HOMES", tibberToken],
+    async () => {
+      if (tibberToken.length > 0) {
+        return (await getHomes(tibberToken)).sort();
+      }
+      return [];
+    }
+  );
+
+  const currentHomes = userHomes?.map((h) => h.address.address1).sort();
+
+  const loginShelly = async (key: string) => {
+    if (key.length === 92 && (await canLoginShelly(key))) {
+      setShellyToken(key);
+      setShellyLogInError(false);
+    } else if (key.length !== 0) {
+      setShellyLogInError(true);
+    }
+  };
+
+  const loginTibber = async (token: string) => {
+    if (token.length === 43 && (await canLoginTibber("Bearer " + token))) {
+      setTibberToken(token);
+      setTibberLogInError(false);
+    } else if (token.length !== 0) {
+      setTibberLogInError(true);
+    }
+  };
+
+  const getHomeId = (address: string) => {
+    const homeId = userHomes?.find((u) => u.address.address1 === address)?.id;
+    if (homeId) return homeId;
+    return "";
+  };
+
   const form = useForm({
     initialValues: {
       shellyToken: localStorage.getItem("shellyToken") ?? "",
       tibberToken: localStorage.getItem("tibberToken") ?? "",
-      home: localStorage.getItem("tibberHome") ?? "",
+      home: tibberHome?.address ?? "",
       rememberShellyToken: false,
       rememberTibberToken: false,
       rememberHome: false,
@@ -45,31 +97,13 @@ const ShellyLogin: FC = () => {
   ) => {
     setLoading(true);
 
-    const [shellyLogin, tibberLogin] = await Promise.all([
-      canLoginShelly(shellyToken),
-      canLoginTibber("Bearer " + tibberToken),
-    ]);
-
-    if (!shellyLogin) {
-      setShellyLogInError(true);
-    }
-
-    if (!tibberLogin) {
-      setTibberLogInError(true);
-    }
-
-    if (!tibberLogin || !shellyLogin) {
-      setLoading(false);
-      return;
-    }
-
-    setShellyToken(shellyToken);
-    setTibberToken("Bearer " + tibberToken);
-    setHomeId(home);
-
     if (rememberShellyToken) localStorage.setItem("shellyToken", shellyToken);
     if (rememberTibberToken) localStorage.setItem("tibberToken", tibberToken);
-    if (rememberHome) localStorage.setItem("tibberHome", home);
+    if (rememberHome)
+      localStorage.setItem(
+        "tibberHome",
+        JSON.stringify({ id: getHomeId(home), address: home })
+      );
 
     setLoggedIntoShelly(true);
   };
@@ -101,16 +135,16 @@ const ShellyLogin: FC = () => {
           label="Shelly token"
           aria-label="Shelly token"
           className="text-input"
-          autoComplete="on"
           type="password"
           required
           placeholder="Shelly token"
+          onBlur={(e) => loginShelly(e.currentTarget.value)}
           {...form.getInputProps("shellyToken")}
         />
 
         <div className="tibber-checkbox">
           <Checkbox
-            label="Remember Shelly token"
+            label="Remember"
             {...form.getInputProps("rememberShellyToken")}
           />
         </div>
@@ -120,37 +154,39 @@ const ShellyLogin: FC = () => {
           label="Tibber token"
           aria-label="Tibber token"
           className="text-input"
-          autoComplete="on"
           type="password"
+          onBlur={(e) => loginTibber(e.currentTarget.value)}
           required
           placeholder="Tibber token"
+          rightSection={homesLoading && <Loader size="xs" />}
           {...form.getInputProps("tibberToken")}
         />
 
         <div className="tibber-checkbox">
           <Checkbox
-            label="Remember Tibber token"
+            label="Remember"
             {...form.getInputProps("rememberTibberToken")}
           />
         </div>
 
-        <TextInput
-          size="md"
-          label="Tibber home ID"
-          aria-label="Tibber home ID"
+        <Select
+          value={selectedHome}
           className="text-input"
-          autoComplete="on"
-          type="text"
+          size="md"
+          label="Tibber homes"
+          placeholder={
+            tibberToken.length <= 0 ? "Enter valid Tibber token" : "Pick a home"
+          }
           required
-          placeholder="Tibber home ID"
+          disabled={homesLoading || (userHomes && userHomes.length <= 0)}
+          data={currentHomes ?? []}
+          onSelect={(e) => setHomeId(getHomeId(e.currentTarget.value))}
+          rightSection={homesLoading && <Loader size="xs" />}
           {...form.getInputProps("home")}
         />
 
         <div className="tibber-checkbox">
-          <Checkbox
-            label="Remember home"
-            {...form.getInputProps("rememberHome")}
-          />
+          <Checkbox label="Remember" {...form.getInputProps("rememberHome")} />
         </div>
 
         {shellyLogInError && (
@@ -160,7 +196,7 @@ const ShellyLogin: FC = () => {
             color="red"
             disallowClose
           >
-            Shelly login is incorrect.
+            Shelly login is invalid.
           </Notification>
         )}
 
@@ -171,12 +207,22 @@ const ShellyLogin: FC = () => {
             color="red"
             disallowClose
           >
-            Tibber token is incorrect.
+            Tibber token is invalid.
           </Notification>
         )}
 
         <Group position="right" mt="md">
-          <Button variant="default" loading={loading} type="submit">
+          <Button
+            disabled={
+              shellyLogInError ||
+              tibberLogInError ||
+              homesLoading ||
+              homeId.length <= 0
+            }
+            variant="default"
+            loading={loading}
+            type="submit"
+          >
             Log in
           </Button>
         </Group>
