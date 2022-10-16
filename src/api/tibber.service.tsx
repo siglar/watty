@@ -135,8 +135,9 @@ export const useTibberEndpoint = (): UseTibberEndpoint => {
       const consumptionToday = await getTibberConsumptionToday(
         result.data.data.viewer.home.consumption.pageInfo.endCursor
       );
-
-      result.data.data.viewer.home.consumption.nodes.push(consumptionToday);
+      if (consumptionToday) {
+        result.data.data.viewer.home.consumption.nodes.push(consumptionToday);
+      }
     }
 
     return result.data;
