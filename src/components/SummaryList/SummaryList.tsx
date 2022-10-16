@@ -1,4 +1,4 @@
-import { Title, List, ThemeIcon } from "@mantine/core";
+import { List, ThemeIcon } from "@mantine/core";
 import { IconSun, IconCurrencyKroneDanish, IconDevices } from "@tabler/icons";
 import { FC } from "react";
 
@@ -22,7 +22,7 @@ const SummaryList: FC<SummaryListProps> = (props: SummaryListProps) => {
               </ThemeIcon>
             }
           >
-            Consumed: <b>{consumedKw} kW</b>
+            Consumed: <b>{consumedKw} kWh</b>
           </List.Item>
           <List.Item
             icon={

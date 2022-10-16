@@ -22,7 +22,7 @@ const ConsumptionHeader: FC<ConsumptionHeaderProps> = (
         onChange={(e) => setShowCost(e.target.checked)}
       />
       <Switch
-        label="Show consumption (kW)"
+        label="Show consumption (kWh)"
         checked={showConsumption}
         onChange={(e) => setShowConsumption(e.target.checked)}
       />

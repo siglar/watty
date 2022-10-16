@@ -65,7 +65,7 @@ const ConsumptionChart: FC<ConsumptionChartProps> = (
               color: "#413ea0",
             }}
           >
-            Consumption: {content.payload[0].payload.consumption} kW
+            Consumption: {content.payload[0].payload.consumption} kWh
           </p>
           <p
             style={{
@@ -100,8 +100,9 @@ const ConsumptionChart: FC<ConsumptionChartProps> = (
         >
           {!showCost && (
             <LabelList
+              fill={"#ffffff"}
               dataKey="consumption"
-              position="top"
+              position="insideTop"
               formatter={labelFormatter}
             />
           )}
