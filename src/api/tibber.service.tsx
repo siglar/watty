@@ -3,7 +3,7 @@ import { useRef } from "react";
 import { useAuthContext } from "../context/auth.context";
 import { Direction } from "../enums/direction.enum";
 import { getDays } from "../helpers/tibber.helper";
-import { Home, TibberRoot } from "../models/tibber.models";
+import { Home, TibberRoot, Node } from "../models/tibber.models";
 
 const tibberUrl = "https://api.tibber.com/v1-beta/gql";
 
@@ -83,7 +83,7 @@ export const useTibberEndpoint = (): UseTibberEndpoint => {
 
     let days = -1;
     if (month === currentMonth) {
-      days = Number.parseInt(String(today.getDate()).padStart(2, "0"));
+      days = Number.parseInt(String(today.getDate()).padStart(2, "0")) - 1;
     } else {
       days = getDays(today.getFullYear(), month);
     }
@@ -131,7 +131,57 @@ export const useTibberEndpoint = (): UseTibberEndpoint => {
         result.data.data.viewer.home.consumption.pageInfo.startCursor;
     }
 
+    if (month === currentMonth) {
+      const consumptionToday = await getTibberConsumptionToday(
+        result.data.data.viewer.home.consumption.pageInfo.endCursor
+      );
+
+      result.data.data.viewer.home.consumption.nodes.push(consumptionToday);
+    }
+
     return result.data;
+  };
+
+  const getTibberConsumptionToday = async (
+    endCursor: string
+  ): Promise<Node> => {
+    // prettier-ignore
+    const query = 
+    `{
+        viewer {
+          home(id: \"${homeId}\") {
+            timeZone      
+            consumption(resolution: DAILY, after:\"${endCursor}\", first: 1) {
+              pageInfo {
+                startCursor
+                endCursor
+              }
+              nodes {
+                from
+                to
+                cost
+                unitPrice
+                unitPriceVAT
+                consumption
+                consumptionUnit
+              }
+            }
+          }
+        }
+      }`;
+
+    const result = (await axios({
+      url: tibberUrl,
+      method: "POST",
+      headers: {
+        Authorization: tibberToken,
+      },
+      data: {
+        query: query,
+      },
+    })) as AxiosResponse<TibberRoot>;
+
+    return result.data.data.viewer.home.consumption.nodes[0];
   };
 
   return { getHomes, getTibberConsumption, canLogin };

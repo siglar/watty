@@ -33,7 +33,7 @@ const ConsumptionView: FC<ConsumptionViewProps> = (
 
   const dayPrices = tibberData.data.viewer.home.consumption.nodes.map((n) => {
     return {
-      date: format(new Date(n.to), "dd.MMM"),
+      date: format(new Date(n.from), "dd.MMM"),
       cost: n.unitPrice,
     };
   });
@@ -48,9 +48,9 @@ const ConsumptionView: FC<ConsumptionViewProps> = (
 
       return {
         date: shellyDate,
-        cost: Number.parseFloat(((h.consumption / 1000) * dayPrice).toFixed(2)),
+        cost: Number.parseFloat(((h.consumption / 1000) * dayPrice).toFixed(0)),
         kWPrice: Number.parseFloat(dayPrice.toFixed(2)),
-        consumption: Number.parseFloat((h.consumption / 1000).toFixed(2)),
+        consumption: Number.parseFloat((h.consumption / 1000).toFixed(1)),
       };
     });
 

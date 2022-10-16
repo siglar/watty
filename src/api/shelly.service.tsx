@@ -15,14 +15,16 @@ export const useShellyEndpoint = (): UseShellyEndpoint => {
 
   const getDay = (month: number) => {
     const date = new Date();
-    var firstDay = new Date(date.getFullYear(), month, 1);
+    const firstDay = new Date(date.getFullYear(), month, 1);
 
     return format(firstDay, "yyyy-MM-dd");
   };
 
   const getLastDay = (month: number) => {
     const date = new Date();
-    var lastDay = new Date(date.getFullYear(), month + 1, 0);
+    const lastDay = new Date(date.getFullYear(), month + 1, 0);
+
+    lastDay.setDate(lastDay.getDate() + 1);
 
     return format(lastDay, "yyyy-MM-dd");
   };

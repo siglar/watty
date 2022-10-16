@@ -74,7 +74,8 @@ const ConsumptionChart: FC<ConsumptionChartProps> = (
               backgroundColor: "white",
             }}
           >
-            Kilowatt price: {content.payload[0].payload.kWPrice} kr
+            Kilowatt price:{" "}
+            {(content.payload[0].payload.kWPrice * 100).toFixed(0)} øre
           </p>
         </article>
       );
