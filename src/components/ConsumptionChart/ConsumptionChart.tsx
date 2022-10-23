@@ -55,7 +55,7 @@ const ConsumptionChart: FC<ConsumptionChartProps> = (
               color: "#ff7300",
             }}
           >
-            Cost: {content.payload[0].payload.cost} kr
+            Cost: {content.payload[0].payload.cost.toFixed(2)} kr
           </p>
           <p
             style={{
@@ -65,7 +65,7 @@ const ConsumptionChart: FC<ConsumptionChartProps> = (
               color: "#413ea0",
             }}
           >
-            Consumption: {content.payload[0].payload.consumption} kWh
+            Consumption: {content.payload[0].payload.consumption.toFixed(2)} kWh
           </p>
           <p
             style={{
@@ -75,7 +75,7 @@ const ConsumptionChart: FC<ConsumptionChartProps> = (
             }}
           >
             Kilowatt price:{" "}
-            {(content.payload[0].payload.kWPrice * 100).toFixed(0)} øre
+            {(content.payload[0].payload.kWPrice * 100).toFixed(1)} øre
           </p>
         </article>
       );

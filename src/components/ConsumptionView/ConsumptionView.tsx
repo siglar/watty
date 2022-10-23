@@ -1,15 +1,20 @@
 import { FC, useState } from "react";
 import ConsumptionChart from "../ConsumptionChart/ConsumptionChart";
 import "./ConsumptionView.css";
-import { format, parse } from "date-fns";
+import { format } from "date-fns";
 import { ShellyRoot } from "../../models/shelly.models";
 import { TibberRoot } from "../../models/tibber.models";
-import { calculateAveragePrice } from "../../helpers/tibber.helper";
+import {
+  calculateAveragePrice,
+  calculateElectricitySupport,
+} from "../../helpers/tibber.helper";
 import { ChartData } from "../../models/chart.models";
 import SummaryList from "../SummaryList/SummaryList";
 import NavigationRow from "../NavigationRow/NavigationRow";
 import ConsumptionHeader from "../ConsumptionHeader/ConsumptionHeader";
 import { LoadingOverlay } from "@mantine/core";
+import { useOptionsContext } from "../../context/options.context";
+import React from "react";
 
 interface ConsumptionViewProps {
   shellyConsumption: ShellyRoot;
@@ -22,14 +27,14 @@ const ConsumptionView: FC<ConsumptionViewProps> = (
 ) => {
   const { shellyConsumption, tibberData, loading } = props;
 
+  const { withElectricitySupport } = useOptionsContext();
+
   const [showCost, setShowCost] = useState<boolean>(true);
   const [showConsumption, setShowConsumption] = useState<boolean>(false);
 
   const averagePrice = calculateAveragePrice(tibberData);
 
   const consumedKw = shellyConsumption.data.total ?? 0;
-
-  const priceForDevice = shellyConsumption.data.total * averagePrice;
 
   const dayPrices = tibberData.data.viewer.home.consumption.nodes.map((n) => {
     return {
@@ -39,20 +44,37 @@ const ConsumptionView: FC<ConsumptionViewProps> = (
   });
 
   const chartData: ChartData[] = shellyConsumption.data.history
-    .filter((h) => h.consumption > 0)
-    .map((h) => {
-      const shellyDate = format(new Date(h.datetime), "dd.MMM");
+    .filter((history) => history.consumption > 0)
+    .map((history) => {
+      const shellyDate = format(new Date(history.datetime), "dd.MMM");
+
+      const dayConsumption = history.consumption / 1000;
 
       const dayPrice =
         dayPrices.find((dp) => dp.date === shellyDate)?.cost ?? averagePrice;
 
+      const dayCost = withElectricitySupport
+        ? calculateElectricitySupport(
+            dayPrice * 100,
+            dayConsumption,
+            dayConsumption * dayPrice
+          )
+        : dayConsumption * dayPrice;
+
       return {
         date: shellyDate,
-        cost: Number.parseFloat(((h.consumption / 1000) * dayPrice).toFixed(0)),
-        kWPrice: Number.parseFloat(dayPrice.toFixed(2)),
-        consumption: Number.parseFloat((h.consumption / 1000).toFixed(1)),
+        cost: dayCost,
+        kWPrice: dayPrice,
+        consumption: dayConsumption,
       };
     });
+
+  const getTotal = () => {
+    const allCosts = chartData.map((c) => c.cost);
+    return allCosts.reduce((pv, cv) => pv + cv, 0);
+  };
+
+  const priceForDevice = getTotal();
 
   return (
     <>
@@ -85,4 +107,4 @@ const ConsumptionView: FC<ConsumptionViewProps> = (
   );
 };
 
-export default ConsumptionView;
+export default React.memo(ConsumptionView);

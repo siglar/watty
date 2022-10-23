@@ -85,7 +85,7 @@ export const useTibberEndpoint = (): UseTibberEndpoint => {
     if (month === currentMonth) {
       days = Number.parseInt(String(today.getDate()).padStart(2, "0")) - 1;
     } else {
-      days = getDays(today.getFullYear(), month);
+      days = getDays(today.getFullYear(), month) - 1;
     }
 
     const resolution = `DAILY, last: ${days}`;

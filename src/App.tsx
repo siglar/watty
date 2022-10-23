@@ -5,6 +5,7 @@ import { MantineProvider } from "@mantine/core";
 import { AuthContextProvider } from "./context/auth.context";
 import LandingPage from "./pages/Landing.page";
 import { AxiosError } from "axios";
+import { OptionsContextProvider } from "./context/options.context";
 
 const queryClient = new QueryClient();
 queryClient.setDefaultOptions({
@@ -21,7 +22,9 @@ const App: FC = () => {
     <QueryClientProvider client={queryClient}>
       <MantineProvider withGlobalStyles withNormalizeCSS>
         <AuthContextProvider>
-          <LandingPage />
+          <OptionsContextProvider>
+            <LandingPage />
+          </OptionsContextProvider>
         </AuthContextProvider>
       </MantineProvider>
     </QueryClientProvider>

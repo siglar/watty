@@ -31,7 +31,7 @@ const SummaryList: FC<SummaryListProps> = (props: SummaryListProps) => {
               </ThemeIcon>
             }
           >
-            Average kilowatt price: <b>{(averagePrice * 100).toFixed(0)} øre</b>
+            Average kilowatt price: <b>{averagePrice} øre</b>
           </List.Item>
           <List.Item
             icon={
