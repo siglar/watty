@@ -2,7 +2,7 @@ import { FC, useState } from "react";
 import ConsumptionChart from "../ConsumptionChart/ConsumptionChart";
 import "./ConsumptionView.css";
 import { format } from "date-fns";
-import { ShellyRoot } from "../../models/shelly.models";
+import { ShellyDataRoot } from "../../models/Shelly/data.models";
 import { TibberRoot } from "../../models/tibber.models";
 import {
   calculateAveragePrice,
@@ -17,7 +17,7 @@ import { useOptionsContext } from "../../context/options.context";
 import React from "react";
 
 interface ConsumptionViewProps {
-  shellyConsumption: ShellyRoot;
+  shellyConsumption: ShellyDataRoot;
   tibberData: TibberRoot;
   loading: boolean;
 }

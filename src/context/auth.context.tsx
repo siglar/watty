@@ -22,6 +22,8 @@ export type AuthContextType = {
   setTibberToken: Dispatch<SetStateAction<string>>;
   homeId: string;
   setHomeId: Dispatch<SetStateAction<string>>;
+  device: string;
+  setDeviceId: Dispatch<SetStateAction<string>>;
 };
 
 export const AuthContext = createContext<AuthContextType>({
@@ -33,6 +35,8 @@ export const AuthContext = createContext<AuthContextType>({
   setTibberToken: () => console.log("no provider"),
   homeId: "",
   setHomeId: () => console.log("no provider"),
+  device: "",
+  setDeviceId: () => console.log("no provider"),
 });
 
 export const useAuthContext = (): AuthContextType => useContext(AuthContext);
@@ -53,6 +57,9 @@ export const AuthContextProvider: FC<ProviderProps> = (
   ) as HomeId;
 
   const [homeId, setHomeId] = useState<string>(tibberHome?.id ?? "");
+  const [device, setDeviceId] = useState<string>(
+    localStorage.getItem("device") ?? ""
+  );
 
   return (
     <AuthContext.Provider
@@ -65,6 +72,8 @@ export const AuthContextProvider: FC<ProviderProps> = (
         setTibberToken,
         homeId,
         setHomeId,
+        device,
+        setDeviceId,
       }}
     >
       {props.children}

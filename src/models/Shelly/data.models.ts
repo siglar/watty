@@ -16,7 +16,7 @@ export interface Data {
   units: Units;
 }
 
-export interface ShellyRoot {
+export interface ShellyDataRoot {
   isok: boolean;
   data: Data;
 }

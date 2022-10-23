@@ -19,15 +19,18 @@ import { useQuery } from "@tanstack/react-query";
 import { HomeId } from "../../models/tibber.models";
 
 const ShellyLogin: FC = () => {
-  const { canLogin: canLoginShelly } = useShellyEndpoint();
+  const { canLogin: canLoginShelly, getDevices } = useShellyEndpoint();
   const { canLogin: canLoginTibber, getHomes } = useTibberEndpoint();
   const {
     setLoggedIntoShelly,
     setTibberToken,
     tibberToken,
     setShellyToken,
+    shellyToken,
     setHomeId,
     homeId,
+    device,
+    setDeviceId,
   } = useAuthContext();
 
   const [shellyLogInError, setShellyLogInError] = useState<boolean>(false);
@@ -39,12 +42,23 @@ const ShellyLogin: FC = () => {
   ) as HomeId;
 
   const [selectedHome] = useState<string>(tibberHome?.address ?? "");
+  const [selectedDevice] = useState<string>(device);
 
   const { data: userHomes, isLoading: homesLoading } = useQuery(
     ["TIBBER", "HOMES", tibberToken],
     async () => {
       if (tibberToken.length > 0) {
         return (await getHomes(tibberToken)).sort();
+      }
+      return [];
+    }
+  );
+
+  const { data: devices, isLoading: devicesLoading } = useQuery(
+    ["SHELLY", "DEVICES", shellyToken],
+    async () => {
+      if (shellyToken.length > 0) {
+        return await getDevices(shellyToken);
       }
       return [];
     }
@@ -79,9 +93,11 @@ const ShellyLogin: FC = () => {
   const form = useForm({
     initialValues: {
       shellyToken: localStorage.getItem("shellyToken") ?? "",
+      device: localStorage.getItem("device") ?? "",
       tibberToken: localStorage.getItem("tibberToken") ?? "",
       home: tibberHome?.address ?? "",
       rememberShellyToken: false,
+      rememberDevice: false,
       rememberTibberToken: false,
       rememberHome: false,
     },
@@ -89,15 +105,18 @@ const ShellyLogin: FC = () => {
 
   const formSubmit = async (
     shellyToken: string,
+    device: string,
     tibberToken: string,
     home: string,
     rememberShellyToken: boolean,
+    rememberDevice: boolean,
     rememberTibberToken: boolean,
     rememberHome: boolean
   ) => {
     setLoading(true);
 
     if (rememberShellyToken) localStorage.setItem("shellyToken", shellyToken);
+    if (rememberDevice) localStorage.setItem("device", device);
     if (rememberTibberToken) localStorage.setItem("tibberToken", tibberToken);
     if (rememberHome)
       localStorage.setItem(
@@ -122,9 +141,11 @@ const ShellyLogin: FC = () => {
         onSubmit={form.onSubmit((values) =>
           formSubmit(
             values.shellyToken,
+            values.device,
             values.tibberToken,
             values.home,
             values.rememberShellyToken,
+            values.rememberDevice,
             values.rememberTibberToken,
             values.rememberHome
           )
@@ -146,6 +167,29 @@ const ShellyLogin: FC = () => {
           <Checkbox
             label="Remember"
             {...form.getInputProps("rememberShellyToken")}
+          />
+        </div>
+
+        <Select
+          value={selectedDevice}
+          className="text-input"
+          size="md"
+          label="Shelly devices"
+          placeholder={
+            tibberToken.length <= 0 ? "Enter valid Shelly key" : "Pick a device"
+          }
+          required
+          disabled={devicesLoading || (devices && devices.length <= 0)}
+          data={devices ?? []}
+          onSelect={(e) => setDeviceId(e.currentTarget.value)}
+          rightSection={devicesLoading && <Loader size="xs" />}
+          {...form.getInputProps("device")}
+        />
+
+        <div className="tibber-checkbox">
+          <Checkbox
+            label="Remember"
+            {...form.getInputProps("rememberDevice")}
           />
         </div>
 
