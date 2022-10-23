@@ -267,7 +267,8 @@ const ShellyLogin: FC = () => {
               shellyLogInError ||
               tibberLogInError ||
               homesLoading ||
-              homeId.length <= 0
+              homeId.length <= 0 ||
+              device.length <= 0
             }
             variant="default"
             loading={loading}
