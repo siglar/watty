@@ -51,7 +51,8 @@ const ConsumptionView: FC<ConsumptionViewProps> = (
       const dayConsumption = history.consumption / 1000;
 
       const dayPrice =
-        dayPrices.find((dp) => dp.date === shellyDate)?.cost ?? averagePrice;
+        dayPrices.find((dp) => dp.date === shellyDate)?.cost ??
+        averagePrice / 100;
 
       const dayCost = withElectricitySupport
         ? calculateElectricitySupport(

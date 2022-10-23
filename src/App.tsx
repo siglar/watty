@@ -10,7 +10,7 @@ import { OptionsContextProvider } from "./context/options.context";
 const queryClient = new QueryClient();
 queryClient.setDefaultOptions({
   queries: {
-    staleTime: 43200000, // 12 hours
+    staleTime: Infinity,
     useErrorBoundary: true,
     retry: (failureCount, error) =>
       (error as AxiosError)?.response?.status !== 403 && failureCount < 3,

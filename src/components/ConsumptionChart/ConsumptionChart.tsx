@@ -102,6 +102,7 @@ const ConsumptionChart: FC<ConsumptionChartProps> = (
         >
           {!showCost && (
             <LabelList
+              style={{ fontSize: "90%" }}
               fill={"#ffffff"}
               dataKey="consumption"
               position="insideTop"

@@ -90,6 +90,12 @@ const ShellyLogin: FC = () => {
     return "";
   };
 
+  const getDeviceId = (name: string) => {
+    const deviceId = devices?.find((d) => d.label === name)?.value;
+    if (deviceId) return deviceId;
+    return "";
+  };
+
   const form = useForm({
     initialValues: {
       shellyToken: localStorage.getItem("shellyToken") ?? "",
@@ -181,7 +187,7 @@ const ShellyLogin: FC = () => {
           required
           disabled={devicesLoading || (devices && devices.length <= 0)}
           data={devices ?? []}
-          onSelect={(e) => setDeviceId(e.currentTarget.value)}
+          onSelect={(e) => setDeviceId(getDeviceId(e.currentTarget.value))}
           rightSection={devicesLoading && <Loader size="xs" />}
           {...form.getInputProps("device")}
         />

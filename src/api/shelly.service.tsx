@@ -2,12 +2,16 @@ import { ShellyDataRoot } from "../models/Shelly/data.models";
 import { useAuthContext } from "../context/auth.context";
 import axios from "axios";
 import { format } from "date-fns";
-import { Device, ShellyDeviceRoot } from "../models/Shelly/device.models";
+import {
+  Device,
+  ShellyDevice,
+  ShellyDeviceRoot,
+} from "../models/Shelly/device.models";
 
 export const shellyUrl = "https://shelly-44-eu.shelly.cloud";
 
 export interface UseShellyEndpoint {
-  getDevices: (token: string) => Promise<string[]>;
+  getDevices: (token: string) => Promise<ShellyDevice[]>;
   getConsumption: (month: number) => Promise<ShellyDataRoot>;
   canLogin: (token: string) => Promise<boolean>;
 }
@@ -31,17 +35,22 @@ export const useShellyEndpoint = (): UseShellyEndpoint => {
     return format(lastDay, "yyyy-MM-dd");
   };
 
-  const getDevices = async (token: string): Promise<string[]> => {
+  const getDevices = async (token: string): Promise<ShellyDevice[]> => {
     const { data } = await axios.post<ShellyDeviceRoot>(
-      `${shellyUrl}/device/all_status?show_info=true&no_shared=true&auth_key=${token}`,
-      null
+      `${shellyUrl}/interface/device/get_all_lists`,
+      null,
+      {
+        params: {
+          auth_key: token,
+        },
+      }
     );
 
-    const devices = data.data.devices_status;
+    const devices = data.data.devices;
 
-    const deviceNames = Object.values(devices).map(
-      (d: Device) => d._dev_info.id
-    );
+    const deviceNames = Object.values(devices).map((d: Device) => {
+      return { value: d.id, label: d.name ?? d.id } as ShellyDevice;
+    });
 
     return deviceNames;
   };
