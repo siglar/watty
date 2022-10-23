@@ -94,6 +94,7 @@ const ConsumptionChart: FC<ConsumptionChartProps> = (
         <Tooltip content={(content) => renderTooltip(content)} />
 
         <Bar
+          animationDuration={250}
           hide={!showConsumption}
           dataKey="consumption"
           barSize={20}
@@ -109,6 +110,7 @@ const ConsumptionChart: FC<ConsumptionChartProps> = (
           )}
         </Bar>
         <Line
+          animationDuration={250}
           hide={!showCost}
           type="monotone"
           dataKey="cost"
