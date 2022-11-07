@@ -13,7 +13,6 @@ export const shellyUrl = "https://shelly-44-eu.shelly.cloud";
 export interface UseShellyEndpoint {
   getDevices: (token: string) => Promise<ShellyDevice[]>;
   getConsumption: (month: number) => Promise<ShellyDataRoot>;
-  canLogin: (token: string) => Promise<boolean>;
 }
 
 export const useShellyEndpoint = (): UseShellyEndpoint => {
@@ -72,23 +71,5 @@ export const useShellyEndpoint = (): UseShellyEndpoint => {
     return data;
   };
 
-  const canLogin = async (token: string): Promise<boolean> => {
-    const month = new Date().getMonth();
-    const firstDay = getDay(month);
-    const lastDay = getLastDay(month);
-
-    const { status } = await axios.post(
-      `${shellyUrl}/statistics/relay/consumption?id=28d566&channel=0&date_range=custom&date_from=${firstDay}&date_to=${lastDay}`,
-      null,
-      {
-        params: {
-          auth_key: token,
-        },
-      }
-    );
-
-    return status === 200;
-  };
-
-  return { getDevices, getConsumption, canLogin };
+  return { getDevices, getConsumption };
 };

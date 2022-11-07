@@ -19,7 +19,7 @@ import { useQuery } from "@tanstack/react-query";
 import { HomeId } from "../../models/tibber.models";
 
 const ShellyLogin: FC = () => {
-  const { canLogin: canLoginShelly, getDevices } = useShellyEndpoint();
+  const { getDevices } = useShellyEndpoint();
   const { canLogin: canLoginTibber, getHomes } = useTibberEndpoint();
   const {
     setLoggedIntoShelly,
@@ -67,7 +67,7 @@ const ShellyLogin: FC = () => {
   const currentHomes = userHomes?.map((h) => h.address.address1).sort();
 
   const loginShelly = async (key: string) => {
-    if (key.length === 92 && (await canLoginShelly(key))) {
+    if (key.length === 92 && (await getDevices(key))) {
       setShellyToken(key);
       setShellyLogInError(false);
     } else if (key.length !== 0) {
@@ -181,9 +181,7 @@ const ShellyLogin: FC = () => {
           className="text-input"
           size="md"
           label="Shelly devices"
-          placeholder={
-            tibberToken.length <= 0 ? "Enter valid Shelly key" : "Pick a device"
-          }
+          placeholder={"Pick a device"}
           required
           disabled={devicesLoading || (devices && devices.length <= 0)}
           data={devices ?? []}
