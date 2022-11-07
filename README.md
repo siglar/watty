@@ -17,5 +17,5 @@ When signed in, copy the access token found here: https://developer.tibber.com/s
 
 With these two tokens, you can "log in" to Watty and see how much the selected device costs you in NOK.
 
-NOTICE: Watty is experimental, and does not guarantee that the calculated costs are correct. Watty does not include your "nettleie" (network rent cost); this is something
+<b>NOTICE:</b> Watty is experimental, and does not guarantee that the calculated costs are correct. Watty does not include your "nettleie" (network rent cost); this is something
 you have to calculate your self.
