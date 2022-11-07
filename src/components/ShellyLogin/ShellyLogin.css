@@ -1,0 +1,31 @@
+img {
+    height: 100px;
+    width: 100px;
+}
+
+.login-wrapper{
+    display: flex;
+    flex-direction: column;
+    max-width: 720px;
+    width: 80vw;
+}
+
+.login-header{
+    display: flex;
+    max-height: 100px;
+    gap: 1rem; 
+}
+
+.notification-margin{
+    margin-top: 2ch;
+}
+
+.tibber-checkbox {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1ch;
+}
+
+.text-input {
+    margin: 1rem 0 0 0;
+}
