@@ -9,11 +9,15 @@ const NavigationRow: FC = () => {
   const { withElectricitySupport, setWithElectricitySupport } =
     useOptionsContext();
 
+  const backToLogin = () => {
+    setLoggedIntoShelly(false);
+  };
+
   return (
     <>
       <div className="button-row">
         <Button
-          onClick={() => setLoggedIntoShelly(false)}
+          onClick={() => backToLogin()}
           leftIcon={<IconArrowBack />}
           variant="subtle"
         >

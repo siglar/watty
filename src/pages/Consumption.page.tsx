@@ -17,12 +17,12 @@ const ConsumptionPage: FC<ConsumptionPageProps> = (
 ) => {
   const { month, direction } = props;
 
-  const { homeId } = useAuthContext();
+  const { homeId, device } = useAuthContext();
   const { getConsumption } = useShellyEndpoint();
   const { getTibberConsumption } = useTibberEndpoint();
 
   const { data: shellyConsumption, isRefetching: shellyLoading } = useQuery(
-    ["SHELLY, CONSUMPTION", month, homeId],
+    ["SHELLY, CONSUMPTION", month, homeId, device],
     async () => await getConsumption(month),
     {
       keepPreviousData: true,
@@ -30,7 +30,7 @@ const ConsumptionPage: FC<ConsumptionPageProps> = (
   );
 
   const { data: tibberData, isRefetching: tibberLoading } = useQuery(
-    ["TIBBER, CONSUMPTION", month, homeId],
+    ["TIBBER, CONSUMPTION", month, homeId, device],
     async () => await getTibberConsumption(month, direction),
     {
       keepPreviousData: true,
