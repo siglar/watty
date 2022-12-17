@@ -29,7 +29,7 @@ export const useShellyEndpoint = (): UseShellyEndpoint => {
     const date = new Date();
     const lastDay = new Date(date.getFullYear(), month + 1, 0);
 
-    lastDay.setDate(lastDay.getDate() + 1);
+    lastDay.setDate(lastDay.getDate());
 
     return format(lastDay, "yyyy-MM-dd");
   };
@@ -56,7 +56,9 @@ export const useShellyEndpoint = (): UseShellyEndpoint => {
 
   const getConsumption = async (month: number): Promise<ShellyDataRoot> => {
     const firstDay = getDay(month);
-    const lastDay = getLastDay(month);
+    let lastDay = getLastDay(month);
+
+    lastDay += " 23:59:59";
 
     const { data } = await axios.post<ShellyDataRoot>(
       `${shellyUrl}/statistics/relay/consumption?id=${device}&channel=0&date_range=custom&date_from=${firstDay}&date_to=${lastDay}`,
