@@ -28,6 +28,7 @@ export const calculateElectricitySupport = (
   return totalPrice;
 };
 
-export const getDays = (year: number, month: number) => {
-  return new Date(year, month, 0).getDate();
+export const getCursor = (year: number, month: number) => {
+  const firstDayOfNextMonth = new Date(year, month, 1).toISOString();
+  return btoa(firstDayOfNextMonth);
 };

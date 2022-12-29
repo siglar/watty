@@ -12,21 +12,21 @@ export const shellyUrl = "https://shelly-44-eu.shelly.cloud";
 
 export interface UseShellyEndpoint {
   getDevices: (token: string) => Promise<ShellyDevice[]>;
-  getConsumption: (month: number) => Promise<ShellyDataRoot>;
+  getConsumption: (year: number, month: number) => Promise<ShellyDataRoot>;
 }
 
 export const useShellyEndpoint = (): UseShellyEndpoint => {
   const { shellyToken, device } = useAuthContext();
 
-  const getDay = (month: number) => {
-    const date = new Date();
+  const getFirstDay = (year: number, month: number) => {
+    const date = new Date(year, month);
     const firstDay = new Date(date.getFullYear(), month, 1);
 
     return format(firstDay, "yyyy-MM-dd");
   };
 
-  const getLastDay = (month: number) => {
-    const date = new Date();
+  const getLastDay = (year: number, month: number) => {
+    const date = new Date(year, month);
     const lastDay = new Date(date.getFullYear(), month + 1, 0);
 
     lastDay.setDate(lastDay.getDate());
@@ -54,9 +54,12 @@ export const useShellyEndpoint = (): UseShellyEndpoint => {
     return deviceNames;
   };
 
-  const getConsumption = async (month: number): Promise<ShellyDataRoot> => {
-    const firstDay = getDay(month);
-    let lastDay = getLastDay(month);
+  const getConsumption = async (
+    year: number,
+    month: number
+  ): Promise<ShellyDataRoot> => {
+    const firstDay = getFirstDay(year, month);
+    let lastDay = getLastDay(year, month);
 
     lastDay += " 23:59:59";
 
