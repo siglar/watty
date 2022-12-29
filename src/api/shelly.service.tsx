@@ -6,6 +6,22 @@ import { Device, ShellyDevice, ShellyDeviceRoot } from '../models/Shelly/device.
 
 export const shellyUrl = 'https://shelly-44-eu.shelly.cloud';
 
+const getFirstDay = (year: number, month: number) => {
+  const date = new Date(year, month);
+  const firstDay = new Date(date.getFullYear(), month, 1);
+
+  return format(firstDay, 'yyyy-MM-dd');
+};
+
+const getLastDay = (year: number, month: number) => {
+  const date = new Date(year, month);
+  const lastDay = new Date(date.getFullYear(), month + 1, 0);
+
+  lastDay.setDate(lastDay.getDate());
+
+  return format(lastDay, 'yyyy-MM-dd');
+};
+
 export interface UseShellyEndpoint {
   getDevices: (token: string) => Promise<ShellyDevice[]>;
   getConsumption: (year: number, month: number) => Promise<ShellyDataRoot>;
@@ -13,22 +29,6 @@ export interface UseShellyEndpoint {
 
 export const useShellyEndpoint = (): UseShellyEndpoint => {
   const { shellyToken, device } = useAuthContext();
-
-  const getFirstDay = (year: number, month: number) => {
-    const date = new Date(year, month);
-    const firstDay = new Date(date.getFullYear(), month, 1);
-
-    return format(firstDay, 'yyyy-MM-dd');
-  };
-
-  const getLastDay = (year: number, month: number) => {
-    const date = new Date(year, month);
-    const lastDay = new Date(date.getFullYear(), month + 1, 0);
-
-    lastDay.setDate(lastDay.getDate());
-
-    return format(lastDay, 'yyyy-MM-dd');
-  };
 
   const getDevices = async (token: string): Promise<ShellyDevice[]> => {
     const { data } = await axios.post<ShellyDeviceRoot>(`${shellyUrl}/interface/device/get_all_lists`, null, {
