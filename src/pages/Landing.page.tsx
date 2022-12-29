@@ -7,9 +7,7 @@ import MonthPicker from '../components/MonthPicker/MonthPicker';
 const LandingPage: FC = () => {
   const { loggedIntoShelly } = useAuthContext();
 
-  const date = new Date();
-  const currentMonth = date.getMonth();
-  const [month, setMonth] = useState<number>(currentMonth);
+  const [month, setMonth] = useState<number>(new Date().getMonth());
   const [year, setYear] = useState<number>(new Date().getFullYear());
 
   if (!loggedIntoShelly) return <ShellyLogin />;
