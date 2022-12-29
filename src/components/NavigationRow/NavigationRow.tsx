@@ -1,13 +1,12 @@
-import { Button, Switch } from "@mantine/core";
-import { IconArrowBack } from "@tabler/icons";
-import { FC } from "react";
-import { useAuthContext } from "../../context/auth.context";
-import { useOptionsContext } from "../../context/options.context";
+import { Button, Switch } from '@mantine/core';
+import { IconArrowBack } from '@tabler/icons';
+import { FC } from 'react';
+import { useAuthContext } from '../../context/auth.context';
+import { useOptionsContext } from '../../context/options.context';
 
 const NavigationRow: FC = () => {
   const { setLoggedIntoShelly } = useAuthContext();
-  const { withElectricitySupport, setWithElectricitySupport } =
-    useOptionsContext();
+  const { withElectricitySupport, setWithElectricitySupport } = useOptionsContext();
 
   const backToLogin = () => {
     setLoggedIntoShelly(false);
@@ -16,11 +15,7 @@ const NavigationRow: FC = () => {
   return (
     <>
       <div className="button-row">
-        <Button
-          onClick={() => backToLogin()}
-          leftIcon={<IconArrowBack />}
-          variant="subtle"
-        >
+        <Button onClick={() => backToLogin()} leftIcon={<IconArrowBack />} variant="subtle">
           Back to login
         </Button>
         <Switch

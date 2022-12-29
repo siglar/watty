@@ -6,7 +6,7 @@ body {
   height: 100vh;
   width: 100vw;
   height: -webkit-fill-available;
-  max-height: 720px;  
+  max-height: 720px;
 }
 
 #root {
@@ -29,5 +29,5 @@ body {
 }
 
 .button-row p {
-  margin: 0 1ch 0 1ch
+  margin: 0 1ch 0 1ch;
 }

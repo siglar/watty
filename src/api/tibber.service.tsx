@@ -1,10 +1,10 @@
-import axios, { AxiosResponse } from "axios";
-import { getDaysInMonth } from "date-fns";
-import { useAuthContext } from "../context/auth.context";
-import { getCursor } from "../helpers/tibber.helper";
-import { Home, TibberRoot } from "../models/tibber.models";
+import axios, { AxiosResponse } from 'axios';
+import { getDaysInMonth } from 'date-fns';
+import { useAuthContext } from '../context/auth.context';
+import { getCursor } from '../helpers/tibber.helper';
+import { Home, TibberRoot } from '../models/tibber.models';
 
-const tibberUrl = "https://api.tibber.com/v1-beta/gql";
+const tibberUrl = 'https://api.tibber.com/v1-beta/gql';
 
 export interface UseTibberEndpoint {
   getHomes: (token: string) => Promise<Home[]>;
@@ -29,13 +29,13 @@ export const useTibberEndpoint = (): UseTibberEndpoint => {
 
     const result = (await axios({
       url: tibberUrl,
-      method: "POST",
+      method: 'POST',
       headers: {
-        Authorization: token,
+        Authorization: token
       },
       data: {
-        query: query,
-      },
+        query: query
+      }
     })) as AxiosResponse<TibberRoot>;
 
     return result.data.data.viewer.homes.map((home) => home);
@@ -50,29 +50,21 @@ export const useTibberEndpoint = (): UseTibberEndpoint => {
 
     const result = (await axios({
       url: tibberUrl,
-      method: "POST",
+      method: 'POST',
       headers: {
-        Authorization: token,
+        Authorization: token
       },
       data: {
-        query: query,
-      },
+        query: query
+      }
     })) as AxiosResponse<TibberRoot>;
 
-    if (
-      result.data.errors?.some((e) =>
-        e.message.includes("No valid access token in request")
-      )
-    )
-      return false;
+    if (result.data.errors?.some((e) => e.message.includes('No valid access token in request'))) return false;
 
     return true;
   };
 
-  const getTibberConsumption = async (
-    year: number,
-    month: number
-  ): Promise<TibberRoot> => {
+  const getTibberConsumption = async (year: number, month: number): Promise<TibberRoot> => {
     const daysInMonth = getDaysInMonth(new Date(year, month));
     const cursor = getCursor(year, month + 1);
 
@@ -103,13 +95,13 @@ export const useTibberEndpoint = (): UseTibberEndpoint => {
 
     const result = (await axios({
       url: tibberUrl,
-      method: "POST",
+      method: 'POST',
       headers: {
-        Authorization: tibberToken,
+        Authorization: tibberToken
       },
       data: {
-        query: query,
-      },
+        query: query
+      }
     })) as AxiosResponse<TibberRoot>;
 
     return result.data;

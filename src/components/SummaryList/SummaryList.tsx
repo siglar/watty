@@ -1,6 +1,6 @@
-import { List, ThemeIcon } from "@mantine/core";
-import { IconSun, IconCurrencyKroneDanish, IconDevices } from "@tabler/icons";
-import { FC } from "react";
+import { List, ThemeIcon } from '@mantine/core';
+import { IconSun, IconCurrencyKroneDanish, IconDevices } from '@tabler/icons';
+import { FC } from 'react';
 
 interface SummaryListProps {
   consumedKw: number;

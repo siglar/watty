@@ -1,16 +1,16 @@
 .options-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    width: 100%;
-    gap: 2rem;
-    padding-left: 1rem;
-    padding-right: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  width: 100%;
+  gap: 2rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
 }
 
 .consumption-wrapper {
-    margin-top: 2rem;
-    margin-bottom: 2rem;
-    height: 320px;
-    width: 100%;
-  }
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  height: 320px;
+  width: 100%;
+}

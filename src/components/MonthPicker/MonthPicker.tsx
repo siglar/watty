@@ -1,21 +1,21 @@
-import { ActionIcon } from "@mantine/core";
-import { IconArrowLeft, IconArrowRight } from "@tabler/icons";
-import { Dispatch, FC, SetStateAction } from "react";
-import "./MonthPicker.css";
+import { ActionIcon } from '@mantine/core';
+import { IconArrowLeft, IconArrowRight } from '@tabler/icons';
+import { Dispatch, FC, SetStateAction } from 'react';
+import './MonthPicker.css';
 
 const months = [
-  { value: "0", label: "January" },
-  { value: "1", label: "February" },
-  { value: "2", label: "March" },
-  { value: "3", label: "April" },
-  { value: "4", label: "May" },
-  { value: "5", label: "June" },
-  { value: "6", label: "July" },
-  { value: "7", label: "August" },
-  { value: "8", label: "September" },
-  { value: "9", label: "October" },
-  { value: "10", label: "November" },
-  { value: "11", label: "December" },
+  { value: '0', label: 'January' },
+  { value: '1', label: 'February' },
+  { value: '2', label: 'March' },
+  { value: '3', label: 'April' },
+  { value: '4', label: 'May' },
+  { value: '5', label: 'June' },
+  { value: '6', label: 'July' },
+  { value: '7', label: 'August' },
+  { value: '8', label: 'September' },
+  { value: '9', label: 'October' },
+  { value: '10', label: 'November' },
+  { value: '11', label: 'December' }
 ];
 
 interface MonthPickerProps {
@@ -51,21 +51,12 @@ const MonthPicker: FC<MonthPickerProps> = (props: MonthPickerProps) => {
   };
 
   const disableNext = () => {
-    return (
-      months.find((m) => m.value === month.toString())?.value ===
-        currentMonth.toString() && currentYear === year
-    );
+    return months.find((m) => m.value === month.toString())?.value === currentMonth.toString() && currentYear === year;
   };
 
   return (
     <div className="button-row">
-      <ActionIcon
-        onClick={pageToPrevious}
-        variant="subtle"
-        title="Previous month"
-        size="xl"
-        color="blue"
-      >
+      <ActionIcon onClick={pageToPrevious} variant="subtle" title="Previous month" size="xl" color="blue">
         <IconArrowLeft />
       </ActionIcon>
 
@@ -73,14 +64,7 @@ const MonthPicker: FC<MonthPickerProps> = (props: MonthPickerProps) => {
         <p>{year}</p>
         <p>{months.find((m) => m.value === month.toString())?.label}</p>
       </div>
-      <ActionIcon
-        disabled={disableNext()}
-        onClick={pageToNext}
-        variant="subtle"
-        title="Next month"
-        size="xl"
-        color="blue"
-      >
+      <ActionIcon disabled={disableNext()} onClick={pageToNext} variant="subtle" title="Next month" size="xl" color="blue">
         <IconArrowRight />
       </ActionIcon>
     </div>

@@ -1,14 +1,10 @@
-import { ShellyDataRoot } from "../models/Shelly/data.models";
-import { useAuthContext } from "../context/auth.context";
-import axios from "axios";
-import { format } from "date-fns";
-import {
-  Device,
-  ShellyDevice,
-  ShellyDeviceRoot,
-} from "../models/Shelly/device.models";
+import { ShellyDataRoot } from '../models/Shelly/data.models';
+import { useAuthContext } from '../context/auth.context';
+import axios from 'axios';
+import { format } from 'date-fns';
+import { Device, ShellyDevice, ShellyDeviceRoot } from '../models/Shelly/device.models';
 
-export const shellyUrl = "https://shelly-44-eu.shelly.cloud";
+export const shellyUrl = 'https://shelly-44-eu.shelly.cloud';
 
 export interface UseShellyEndpoint {
   getDevices: (token: string) => Promise<ShellyDevice[]>;
@@ -22,7 +18,7 @@ export const useShellyEndpoint = (): UseShellyEndpoint => {
     const date = new Date(year, month);
     const firstDay = new Date(date.getFullYear(), month, 1);
 
-    return format(firstDay, "yyyy-MM-dd");
+    return format(firstDay, 'yyyy-MM-dd');
   };
 
   const getLastDay = (year: number, month: number) => {
@@ -31,19 +27,15 @@ export const useShellyEndpoint = (): UseShellyEndpoint => {
 
     lastDay.setDate(lastDay.getDate());
 
-    return format(lastDay, "yyyy-MM-dd");
+    return format(lastDay, 'yyyy-MM-dd');
   };
 
   const getDevices = async (token: string): Promise<ShellyDevice[]> => {
-    const { data } = await axios.post<ShellyDeviceRoot>(
-      `${shellyUrl}/interface/device/get_all_lists`,
-      null,
-      {
-        params: {
-          auth_key: token,
-        },
+    const { data } = await axios.post<ShellyDeviceRoot>(`${shellyUrl}/interface/device/get_all_lists`, null, {
+      params: {
+        auth_key: token
       }
-    );
+    });
 
     const devices = data.data.devices;
 
@@ -54,22 +46,19 @@ export const useShellyEndpoint = (): UseShellyEndpoint => {
     return deviceNames;
   };
 
-  const getConsumption = async (
-    year: number,
-    month: number
-  ): Promise<ShellyDataRoot> => {
+  const getConsumption = async (year: number, month: number): Promise<ShellyDataRoot> => {
     const firstDay = getFirstDay(year, month);
     let lastDay = getLastDay(year, month);
 
-    lastDay += " 23:59:59";
+    lastDay += ' 23:59:59';
 
     const { data } = await axios.post<ShellyDataRoot>(
       `${shellyUrl}/statistics/relay/consumption?id=${device}&channel=0&date_range=custom&date_from=${firstDay}&date_to=${lastDay}`,
       null,
       {
         params: {
-          auth_key: shellyToken,
-        },
+          auth_key: shellyToken
+        }
       }
     );
 

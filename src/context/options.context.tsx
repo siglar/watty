@@ -1,12 +1,4 @@
-import {
-  createContext,
-  Dispatch,
-  FC,
-  ReactNode,
-  SetStateAction,
-  useContext,
-  useState,
-} from "react";
+import { createContext, Dispatch, FC, ReactNode, SetStateAction, useContext, useState } from 'react';
 
 type ProviderProps = {
   children: ReactNode;
@@ -19,22 +11,19 @@ export type OptionsContextType = {
 
 export const OptionsContext = createContext<OptionsContextType>({
   withElectricitySupport: false,
-  setWithElectricitySupport: () => console.log("no provider"),
+  setWithElectricitySupport: () => console.log('no provider')
 });
 
-export const useOptionsContext = (): OptionsContextType =>
-  useContext(OptionsContext);
+export const useOptionsContext = (): OptionsContextType => useContext(OptionsContext);
 
-export const OptionsContextProvider: FC<ProviderProps> = (
-  props: ProviderProps
-) => {
+export const OptionsContextProvider: FC<ProviderProps> = (props: ProviderProps) => {
   const [withElectricitySupport, setWithElectricitySupport] = useState(false);
 
   return (
     <OptionsContext.Provider
       value={{
         withElectricitySupport,
-        setWithElectricitySupport,
+        setWithElectricitySupport
       }}
     >
       {props.children}
