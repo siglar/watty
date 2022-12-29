@@ -72,7 +72,7 @@ export const useTibberEndpoint = (): UseTibberEndpoint => {
     const query = 
     `{
         viewer {
-          home(id: \"${homeId}\") {
+          home(id: "${homeId}") {
             timeZone      
             consumption(resolution: DAILY, last: ${daysInMonth}, before: "${cursor}") {
               pageInfo {
