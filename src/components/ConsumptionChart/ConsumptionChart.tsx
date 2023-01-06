@@ -72,14 +72,14 @@ const ConsumptionChart: FC<ConsumptionChartProps> = (props: ConsumptionChartProp
   };
 
   return (
-    <ResponsiveContainer width="100%" height={270}>
+    <ResponsiveContainer width="100%" height={240}>
       <ComposedChart height={400} data={data}>
         <XAxis dataKey="date" />
         <Tooltip content={(content) => renderTooltip(content)} />
 
         <Bar animationDuration={250} hide={!showConsumption} dataKey="consumption" barSize={20} fill="#413ea0">
           {!showCost && (
-            <LabelList style={{ fontSize: '90%' }} fill={'#ffffff'} dataKey="consumption" position="insideTop" formatter={labelFormatter} />
+            <LabelList style={{ fontSize: '2vw' }} fill={'#ffffff'} dataKey="consumption" position="insideTop" formatter={labelFormatter} />
           )}
         </Bar>
         <Line
