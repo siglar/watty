@@ -72,7 +72,7 @@ const ConsumptionChart: FC<ConsumptionChartProps> = (props: ConsumptionChartProp
   };
 
   return (
-    <ResponsiveContainer width="100%" height={275}>
+    <ResponsiveContainer width="100%" height={270}>
       <ComposedChart height={400} data={data}>
         <XAxis dataKey="date" />
         <Tooltip content={(content) => renderTooltip(content)} />
