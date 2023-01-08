@@ -9,12 +9,14 @@ import { useTibberEndpoint } from '../../api/tibber.service';
 import { useShellyEndpoint } from '../../api/shelly.service';
 import { useQuery } from '@tanstack/react-query';
 import { HomeId } from '../../models/tibber.models';
+import { useNavigate } from 'react-router';
 
 const ShellyLogin: FC = () => {
+  const navigate = useNavigate();
+
   const { getDevices } = useShellyEndpoint();
   const { canLogin: canLoginTibber, getHomes } = useTibberEndpoint();
-  const { setLoggedIntoShelly, setTibberToken, tibberToken, setShellyToken, shellyToken, setHomeId, homeId, device, setDeviceId } =
-    useAuthContext();
+  const { setTibberToken, tibberToken, setShellyToken, shellyToken, setHomeId, homeId, device, setDeviceId } = useAuthContext();
 
   const [shellyLogInError, setShellyLogInError] = useState<boolean>(false);
   const [tibberLogInError, setTibberLogInError] = useState<boolean>(false);
@@ -84,24 +86,14 @@ const ShellyLogin: FC = () => {
     }
   });
 
-  const formSubmit = async (
-    shellyToken: string,
-    device: string,
-    tibberToken: string,
-    home: string,
-    rememberShellyToken: boolean,
-    rememberDevice: boolean,
-    rememberTibberToken: boolean,
-    rememberHome: boolean
-  ) => {
+  const formSubmit = async (shellyToken: string, device: string, tibberToken: string, home: string) => {
     setLoading(true);
 
-    if (rememberShellyToken) localStorage.setItem('shellyToken', shellyToken);
-    if (rememberDevice) localStorage.setItem('device', device);
-    if (rememberTibberToken) localStorage.setItem('tibberToken', tibberToken);
-    if (rememberHome) localStorage.setItem('tibberHome', JSON.stringify({ id: getHomeId(home), address: home }));
+    localStorage.setItem('shellyToken', shellyToken);
+    localStorage.setItem('tibberToken', tibberToken);
+    localStorage.setItem('tibberHome', JSON.stringify({ id: getHomeId(home), address: home }));
 
-    setLoggedIntoShelly(true);
+    navigate(`devices/${device}`);
   };
 
   return (
@@ -114,20 +106,7 @@ const ShellyLogin: FC = () => {
         </article>
       </div>
 
-      <form
-        onSubmit={form.onSubmit((values) =>
-          formSubmit(
-            values.shellyToken,
-            values.device,
-            values.tibberToken,
-            values.home,
-            values.rememberShellyToken,
-            values.rememberDevice,
-            values.rememberTibberToken,
-            values.rememberHome
-          )
-        )}
-      >
+      <form onSubmit={form.onSubmit((values) => formSubmit(values.shellyToken, values.device, values.tibberToken, values.home))}>
         <TextInput
           size="md"
           label="Shelly token"
@@ -139,10 +118,6 @@ const ShellyLogin: FC = () => {
           onBlur={(e) => loginShelly(e.currentTarget.value)}
           {...form.getInputProps('shellyToken')}
         />
-
-        <div className="tibber-checkbox">
-          <Checkbox label="Remember" {...form.getInputProps('rememberShellyToken')} />
-        </div>
 
         <Select
           value={selectedDevice}
@@ -158,10 +133,6 @@ const ShellyLogin: FC = () => {
           {...form.getInputProps('device')}
         />
 
-        <div className="tibber-checkbox">
-          <Checkbox label="Remember" {...form.getInputProps('rememberDevice')} />
-        </div>
-
         <TextInput
           size="md"
           label="Tibber token"
@@ -174,10 +145,6 @@ const ShellyLogin: FC = () => {
           rightSection={homesLoading && <Loader size="xs" />}
           {...form.getInputProps('tibberToken')}
         />
-
-        <div className="tibber-checkbox">
-          <Checkbox label="Remember" {...form.getInputProps('rememberTibberToken')} />
-        </div>
 
         <Select
           value={selectedHome}
@@ -192,10 +159,6 @@ const ShellyLogin: FC = () => {
           rightSection={homesLoading && <Loader size="xs" />}
           {...form.getInputProps('home')}
         />
-
-        <div className="tibber-checkbox">
-          <Checkbox label="Remember" {...form.getInputProps('rememberHome')} />
-        </div>
 
         {shellyLogInError && (
           <Notification className="notification-margin" icon={<IconX size={18} />} color="red" disallowClose>

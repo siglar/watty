@@ -6,13 +6,28 @@ import { AuthContextProvider } from './context/auth.context';
 import LandingPage from './pages/Landing.page';
 import { AxiosError } from 'axios';
 import { OptionsContextProvider } from './context/options.context';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import ErrorPage from './pages/Error.page';
+import ConsumptionPage from './pages/Consumption.page';
+
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <LandingPage />,
+    errorElement: <ErrorPage />
+  },
+  {
+    path: 'devices/:deviceId',
+    element: <ConsumptionPage />
+  }
+]);
 
 const queryClient = new QueryClient();
 queryClient.setDefaultOptions({
   queries: {
     staleTime: Infinity,
-    useErrorBoundary: true,
-    retry: (failureCount, error) => (error as AxiosError)?.response?.status !== 403 && failureCount < 3
+    useErrorBoundary: false,
+    retry: (failureCount, error) => (error as AxiosError)?.response?.status !== 403 && failureCount <= 3
   }
 });
 
@@ -22,7 +37,7 @@ const App: FC = () => {
       <MantineProvider withGlobalStyles withNormalizeCSS>
         <AuthContextProvider>
           <OptionsContextProvider>
-            <LandingPage />
+            <RouterProvider router={router} />
           </OptionsContextProvider>
         </AuthContextProvider>
       </MantineProvider>

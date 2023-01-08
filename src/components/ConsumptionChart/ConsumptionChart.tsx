@@ -79,7 +79,13 @@ const ConsumptionChart: FC<ConsumptionChartProps> = (props: ConsumptionChartProp
 
         <Bar animationDuration={250} hide={!showConsumption} dataKey="consumption" barSize={20} fill="#413ea0">
           {!showCost && (
-            <LabelList style={{ fontSize: '2vw' }} fill={'#ffffff'} dataKey="consumption" position="insideTop" formatter={labelFormatter} />
+            <LabelList
+              style={{ fontSize: '12px' }}
+              fill={'#ffffff'}
+              dataKey="consumption"
+              position="insideTop"
+              formatter={labelFormatter}
+            />
           )}
         </Bar>
         <Line

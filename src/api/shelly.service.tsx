@@ -1,8 +1,9 @@
 import { ShellyDataRoot } from '../models/Shelly/data.models';
 import { useAuthContext } from '../context/auth.context';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { format } from 'date-fns';
 import { Device, ShellyDevice, ShellyDeviceRoot } from '../models/Shelly/device.models';
+import { useNavigate } from 'react-router';
 
 export const shellyUrl = 'https://shelly-44-eu.shelly.cloud';
 
@@ -24,11 +25,12 @@ const getLastDay = (year: number, month: number) => {
 
 export interface UseShellyEndpoint {
   getDevices: (token: string) => Promise<ShellyDevice[]>;
-  getConsumption: (year: number, month: number) => Promise<ShellyDataRoot>;
+  getConsumption: (deviceId: string, year: number, month: number) => Promise<ShellyDataRoot | null>;
 }
 
 export const useShellyEndpoint = (): UseShellyEndpoint => {
-  const { shellyToken, device } = useAuthContext();
+  const { shellyToken } = useAuthContext();
+  const navigate = useNavigate();
 
   const getDevices = async (token: string): Promise<ShellyDevice[]> => {
     const { data } = await axios.post<ShellyDeviceRoot>(`${shellyUrl}/interface/device/get_all_lists`, null, {
@@ -46,23 +48,31 @@ export const useShellyEndpoint = (): UseShellyEndpoint => {
     return deviceNames;
   };
 
-  const getConsumption = async (year: number, month: number): Promise<ShellyDataRoot> => {
+  const getConsumption = async (deviceId: string, year: number, month: number): Promise<ShellyDataRoot | null> => {
     const firstDay = getFirstDay(year, month);
     let lastDay = getLastDay(year, month);
 
     lastDay += ' 23:59:59';
 
-    const { data } = await axios.post<ShellyDataRoot>(
-      `${shellyUrl}/statistics/relay/consumption?id=${device}&channel=0&date_range=custom&date_from=${firstDay}&date_to=${lastDay}`,
-      null,
-      {
-        params: {
-          auth_key: shellyToken
+    try {
+      const result = await axios.post<ShellyDataRoot>(
+        `${shellyUrl}/statistics/relay/consumption?id=${deviceId}&channel=0&date_range=custom&date_from=${firstDay}&date_to=${lastDay}`,
+        null,
+        {
+          params: {
+            auth_key: shellyToken
+          }
         }
-      }
-    );
+      );
 
-    return data;
+      return result.data;
+    } catch (error) {
+      const err = error as AxiosError;
+      if (err.response?.status === 400) {
+        navigate('/');
+      }
+      return null;
+    }
   };
 
   return { getDevices, getConsumption };
