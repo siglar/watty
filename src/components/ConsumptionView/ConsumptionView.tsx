@@ -70,6 +70,7 @@ const ConsumptionView: FC<ConsumptionViewProps> = (props: ConsumptionViewProps) 
     <>
       <div className="options-container">
         <LoadingOverlay visible={loading} overlayBlur={1} />
+
         <NavigationRow />
 
         <SummaryList averagePrice={averagePrice} consumedKw={consumedKw} priceForDevice={priceForDevice} />

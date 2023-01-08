@@ -6,6 +6,7 @@ import { AuthContextProvider } from './context/auth.context';
 import LandingPage from './pages/Landing.page';
 import { AxiosError } from 'axios';
 import { OptionsContextProvider } from './context/options.context';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 const queryClient = new QueryClient();
 queryClient.setDefaultOptions({
@@ -18,15 +19,17 @@ queryClient.setDefaultOptions({
 
 const App: FC = () => {
   return (
-    <QueryClientProvider client={queryClient}>
-      <MantineProvider withGlobalStyles withNormalizeCSS>
-        <AuthContextProvider>
-          <OptionsContextProvider>
-            <LandingPage />
-          </OptionsContextProvider>
-        </AuthContextProvider>
-      </MantineProvider>
-    </QueryClientProvider>
+    <GoogleOAuthProvider clientId="951883528295-vv987gtdrdg55ga3lf6hpjoelf1v2tau.apps.googleusercontent.com">
+      <QueryClientProvider client={queryClient}>
+        <MantineProvider withGlobalStyles withNormalizeCSS>
+          <AuthContextProvider>
+            <OptionsContextProvider>
+              <LandingPage />
+            </OptionsContextProvider>
+          </AuthContextProvider>
+        </MantineProvider>
+      </QueryClientProvider>
+    </GoogleOAuthProvider>
   );
 };
 
