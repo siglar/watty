@@ -2,7 +2,6 @@ import { Button } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons';
 import { FC } from 'react';
 import { useNavigate } from 'react-router';
-import { useAuthContext } from '../../context/auth.context';
 
 const NavigationRow: FC = () => {
   const navigate = useNavigate();

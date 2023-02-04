@@ -7,6 +7,8 @@ type ProviderProps = {
 };
 
 export type AuthContextType = {
+  wattyToken: string;
+  setWattyToken: Dispatch<SetStateAction<string>>;
   shellyToken: string;
   setShellyToken: Dispatch<SetStateAction<string>>;
   tibberToken: string;
@@ -18,6 +20,8 @@ export type AuthContextType = {
 };
 
 export const AuthContext = createContext<AuthContextType>({
+  wattyToken: '',
+  setWattyToken: () => console.log('no provider'),
   shellyToken: '',
   setShellyToken: () => console.log('no provider'),
   tibberToken: '',
@@ -33,6 +37,7 @@ export const useAuthContext = (): AuthContextType => useContext(AuthContext);
 export const AuthContextProvider: FC<ProviderProps> = (props: ProviderProps) => {
   const [shellyToken, setShellyToken] = useState<string>(localStorage.getItem('shellyToken') ?? '');
   const [tibberToken, setTibberToken] = useState<string>(localStorage.getItem('tibberToken') ?? '');
+  const [wattyToken, setWattyToken] = useState<string>(localStorage.getItem('wattyToken') ?? '');
 
   const tibberHome = JSON.parse(localStorage.getItem('tibberHome') ?? '{}') as HomeId;
 
@@ -51,7 +56,9 @@ export const AuthContextProvider: FC<ProviderProps> = (props: ProviderProps) => 
         homeId,
         setHomeId,
         device,
-        setDeviceId
+        setDeviceId,
+        wattyToken,
+        setWattyToken
       }}
     >
       {props.children}

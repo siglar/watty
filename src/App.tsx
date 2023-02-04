@@ -9,12 +9,18 @@ import { OptionsContextProvider } from './context/options.context';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import ErrorPage from './pages/Error.page';
 import ConsumptionPage from './pages/Consumption.page';
+import Register from './components/LogIn/Register/Register';
+import { NotificationsProvider } from '@mantine/notifications';
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: <LandingPage />,
     errorElement: <ErrorPage />
+  },
+  {
+    path: 'register',
+    element: <Register />
   },
   {
     path: 'devices/:deviceId',
@@ -37,7 +43,9 @@ const App: FC = () => {
       <MantineProvider withGlobalStyles withNormalizeCSS>
         <AuthContextProvider>
           <OptionsContextProvider>
-            <RouterProvider router={router} />
+            <NotificationsProvider position="bottom-center">
+              <RouterProvider router={router} />
+            </NotificationsProvider>
           </OptionsContextProvider>
         </AuthContextProvider>
       </MantineProvider>
