@@ -7,7 +7,6 @@ import { TibberRoot } from '../../models/tibber.models';
 import { calculateAveragePrice, calculateElectricitySupport } from '../../helpers/tibber.helper';
 import { ChartData } from '../../models/chart.models';
 import SummaryList from '../SummaryList/SummaryList';
-import NavigationRow from '../NavigationRow/NavigationRow';
 import ConsumptionHeader from '../ConsumptionHeader/ConsumptionHeader';
 import { LoadingOverlay } from '@mantine/core';
 import { useOptionsContext } from '../../context/options.context';
