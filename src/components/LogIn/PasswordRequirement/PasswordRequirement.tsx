@@ -1,7 +1,6 @@
 import { Box, Text } from '@mantine/core';
 import { IconCheck, IconX } from '@tabler/icons';
 import { FC } from 'react';
-import './PasswordRequirement.css';
 
 interface PasswordRequirementProps {
   meets: boolean;

@@ -33,7 +33,8 @@ export const DevicesContextProvider: FC<ProviderProps> = (props: ProviderProps) 
   const { data: devices, isLoading: devicesLoading } = useQuery(
     ['SHELLY', 'DEVICES', tokens.shellyToken],
     async () => {
-      return await getDevices(tokens.shellyToken);
+      let result = await getDevices(tokens.shellyToken);
+      return result.sort((a, b) => a.label.localeCompare(b.label));
     },
     { enabled: Boolean(tokens.shellyToken), onSuccess: (devices) => setDevice(devices[0]) }
   );
@@ -47,7 +48,7 @@ export const DevicesContextProvider: FC<ProviderProps> = (props: ProviderProps) 
   );
 
   const [home, setHome] = useState<Home>({} as Home);
-  const [device, setDevice] = useState<ShellyDevice>();
+  const [device, setDevice] = useState<ShellyDevice>({} as ShellyDevice);
 
   const isLoading = devicesLoading || !devices || homesLoading || !userHomes || !home || !device;
 

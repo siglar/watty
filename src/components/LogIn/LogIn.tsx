@@ -5,7 +5,6 @@ import { FC, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useWattyEndpoint } from '../../api/watty.service';
 import { useAuthContext } from '../../context/auth.context';
-import './LogIn.css';
 import { showNotification } from '@mantine/notifications';
 import { IconX } from '@tabler/icons';
 import { useQuery } from '@tanstack/react-query';

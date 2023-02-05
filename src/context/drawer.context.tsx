@@ -1,5 +1,5 @@
-import { Burger, Drawer, NavLink } from '@mantine/core';
-import { IconActivity, IconChevronRight } from '@tabler/icons';
+import { Burger, Drawer, NavLink, Button } from '@mantine/core';
+import { IconActivity, IconArrowBack, IconChevronRight } from '@tabler/icons';
 import { createContext, Dispatch, FC, ReactNode, SetStateAction, useContext, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { useDevicesContext } from './devices.context';
@@ -52,14 +52,18 @@ export const DrawerContextProvider: FC<ProviderProps> = (props: ProviderProps) =
         <Burger opened={opened} onClick={() => setOpened(!opened)} title={'Select device'} />
       </div>
 
-      <Drawer opened={opened} onClose={() => setOpened(false)} size="xl">
+      <Drawer opened={opened} onClose={() => setOpened(false)} size="xl" withCloseButton={false}>
+        <div style={{ paddingBottom: '1rem', paddingTop: '1rem' }}>
+          <Button onClick={() => navigate('/')} leftIcon={<IconArrowBack />} variant="subtle">
+            Back to login
+          </Button>
+        </div>
         {devices.map((device, index) => {
           return (
             <NavLink
               key={index}
               label={device.label}
               icon={<IconActivity size={16} stroke={1.5} />}
-              rightSection={<IconChevronRight size={12} stroke={1.5} />}
               variant="filled"
               active={device.value === deviceId}
               onClick={() => changeDevice(devices.find((d) => d.value === device.value)?.value ?? '')}

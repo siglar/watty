@@ -6,7 +6,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useWattyEndpoint } from '../../../api/watty.service';
 import LoginHeader from '../LogInHeader/LoginHeader';
 import PasswordRequirement from '../PasswordRequirement/PasswordRequirement';
-import './Register.css';
 import { showNotification } from '@mantine/notifications';
 
 const Register: FC = () => {

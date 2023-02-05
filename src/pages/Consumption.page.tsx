@@ -28,6 +28,7 @@ const ConsumptionPage: FC = () => {
     ['SHELLY, CONSUMPTION', year, month, home.id, deviceId],
     async () => await getConsumption(deviceId, year, month),
     {
+      enabled: Boolean(home.id),
       keepPreviousData: true
     }
   );
