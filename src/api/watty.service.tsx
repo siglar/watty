@@ -1,13 +1,9 @@
 import axios from 'axios';
+import { Tokens } from '../models/tokens.models';
 
 const wattyApiUrl = 'https://localhost:7040';
 
 export interface UseWattyEndpoint {
-  addUser: (email: string, name: string, password: string, shellyToken: string, tibberToken: string) => Promise<boolean>;
-  authorize: (email: string, password: string) => Promise<string>;
-}
-
-export const useWattyEndpoint = (): UseWattyEndpoint => {
   /**
    * Add new user
    * @param email
@@ -17,7 +13,19 @@ export const useWattyEndpoint = (): UseWattyEndpoint => {
    * @param tibberToken
    * @returns True if user added
    */
-  const addUser = async (email: string, name: string, password: string, shellyToken: string, tibberToken: string) => {
+  addUser: (email: string, name: string, password: string, shellyToken: string, tibberToken: string) => Promise<boolean>;
+
+  /**
+   * Authorize user
+   * @param email
+   * @param password
+   * @returns Bearer token if authorized
+   */
+  authorize: (email: string, password: string) => Promise<Tokens>;
+}
+
+export const useWattyEndpoint = (): UseWattyEndpoint => {
+  const addUser = async (email: string, name: string, password: string, shellyToken: string, tibberToken: string): Promise<boolean> => {
     const result = await axios({
       url: `${wattyApiUrl}/User/Auth/Add`,
       method: 'POST',
@@ -33,13 +41,7 @@ export const useWattyEndpoint = (): UseWattyEndpoint => {
     return result.status === 200;
   };
 
-  /**
-   * Authorize user
-   * @param email
-   * @param password
-   * @returns Bearer token if authorized
-   */
-  const authorize = async (email: string, password: string) => {
+  const authorize = async (email: string, password: string): Promise<Tokens> => {
     const result = await axios({
       url: `${wattyApiUrl}/User/Auth/Authorize`,
       method: 'POST',

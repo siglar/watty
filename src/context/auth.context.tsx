@@ -1,18 +1,15 @@
 import { createContext, Dispatch, FC, ReactNode, SetStateAction, useContext, useState } from 'react';
 import { useParams } from 'react-router';
 import { HomeId } from '../models/tibber.models';
+import { Tokens } from '../models/tokens.models';
 
 type ProviderProps = {
   children: ReactNode;
 };
 
 export type AuthContextType = {
-  wattyToken: string;
-  setWattyToken: Dispatch<SetStateAction<string>>;
-  shellyToken: string;
-  setShellyToken: Dispatch<SetStateAction<string>>;
-  tibberToken: string;
-  setTibberToken: Dispatch<SetStateAction<string>>;
+  tokens: Tokens;
+  setTokens: Dispatch<SetStateAction<Tokens>>;
   homeId: string;
   setHomeId: Dispatch<SetStateAction<string>>;
   device: string;
@@ -20,12 +17,8 @@ export type AuthContextType = {
 };
 
 export const AuthContext = createContext<AuthContextType>({
-  wattyToken: '',
-  setWattyToken: () => console.log('no provider'),
-  shellyToken: '',
-  setShellyToken: () => console.log('no provider'),
-  tibberToken: '',
-  setTibberToken: () => console.log('no provider'),
+  tokens: {} as Tokens,
+  setTokens: () => console.log('no provider'),
   homeId: '',
   setHomeId: () => console.log('no provider'),
   device: '',
@@ -35,9 +28,7 @@ export const AuthContext = createContext<AuthContextType>({
 export const useAuthContext = (): AuthContextType => useContext(AuthContext);
 
 export const AuthContextProvider: FC<ProviderProps> = (props: ProviderProps) => {
-  const [shellyToken, setShellyToken] = useState<string>(localStorage.getItem('shellyToken') ?? '');
-  const [tibberToken, setTibberToken] = useState<string>(localStorage.getItem('tibberToken') ?? '');
-  const [wattyToken, setWattyToken] = useState<string>(localStorage.getItem('wattyToken') ?? '');
+  const [tokens, setTokens] = useState<Tokens>(JSON.parse(localStorage.getItem('tokens') ?? '{}') as Tokens);
 
   const tibberHome = JSON.parse(localStorage.getItem('tibberHome') ?? '{}') as HomeId;
 
@@ -49,16 +40,12 @@ export const AuthContextProvider: FC<ProviderProps> = (props: ProviderProps) => 
   return (
     <AuthContext.Provider
       value={{
-        shellyToken,
-        setShellyToken,
-        tibberToken,
-        setTibberToken,
+        tokens,
+        setTokens,
         homeId,
         setHomeId,
         device,
-        setDeviceId,
-        wattyToken,
-        setWattyToken
+        setDeviceId
       }}
     >
       {props.children}

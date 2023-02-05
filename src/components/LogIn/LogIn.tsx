@@ -1,15 +1,24 @@
-import { TextInput, Checkbox, Group, Button, PasswordInput, LoadingOverlay } from '@mantine/core';
-import { useForm } from '@mantine/form';
+import { TextInput, Checkbox, Group, Button, LoadingOverlay } from '@mantine/core';
+import { useForm, isNotEmpty, isEmail } from '@mantine/form';
 import { AxiosError } from 'axios';
 import { FC, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useWattyEndpoint } from '../../api/watty.service';
 import { useAuthContext } from '../../context/auth.context';
 import './LogIn.css';
 import { showNotification } from '@mantine/notifications';
 import { IconX } from '@tabler/icons';
+import { useQuery } from '@tanstack/react-query';
+import { useShellyEndpoint } from '../../api/shelly.service';
 
 const LogIn: FC = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { setTokens, tokens } = useAuthContext();
+  const { authorize } = useWattyEndpoint();
+  const { getDevices } = useShellyEndpoint();
+  const navigate = useNavigate();
+
   const form = useForm({
     initialValues: {
       email: '',
@@ -17,21 +26,26 @@ const LogIn: FC = () => {
     },
 
     validate: {
-      email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
-      password: (value) => value.length >= 8
+      email: isEmail('Invalid email'),
+      password: isNotEmpty('A password is required')
     }
   });
 
-  const [isLoading, setIsLoading] = useState(false);
-  const { setWattyToken } = useAuthContext();
-
-  const { authorize } = useWattyEndpoint();
+  useQuery(
+    ['SHELLY', 'DEVICES', tokens.shellyToken],
+    async () => {
+      return await getDevices(tokens.shellyToken);
+    },
+    { enabled: Boolean(tokens.shellyToken) && isLoggedIn, onSuccess: (devices) => navigate(`/devices/${devices[0].value}`) }
+  );
 
   const login = async (email: string, password: string) => {
     try {
       setIsLoading(true);
-      const token = await authorize(email, password);
-      setWattyToken(`Bearer ${token}`);
+      const tokens = await authorize(email, password);
+      setTokens(tokens);
+      localStorage.setItem('tokens', JSON.stringify(tokens));
+      setIsLoggedIn(true);
     } catch (error) {
       if ((error as AxiosError).response?.status === 401) {
         showNotification({
@@ -56,7 +70,6 @@ const LogIn: FC = () => {
       <form onSubmit={form.onSubmit((values) => login(values.email, values.password))}>
         <TextInput type="email" withAsterisk label="Email" placeholder="Your email" {...form.getInputProps('email')} />
         <TextInput type="password" withAsterisk label="Password" placeholder="Your password" {...form.getInputProps('password')} />
-        {/* <PasswordInput type="password" withAsterisk label="Your password" placeholder="Your password" {...form.getInputProps('password')} /> */}
 
         <Group position="right" mt="md">
           <Link to="/register">
@@ -64,9 +77,7 @@ const LogIn: FC = () => {
               Don't have an account? Register here
             </Button>
           </Link>
-          <Button type="submit" disabled={!form.isValid()}>
-            Log in
-          </Button>
+          <Button type="submit">Log in</Button>
         </Group>
       </form>
     </>

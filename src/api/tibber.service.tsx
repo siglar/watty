@@ -9,11 +9,12 @@ const tibberUrl = 'https://api.tibber.com/v1-beta/gql';
 export interface UseTibberEndpoint {
   getHomes: (token: string) => Promise<Home[]>;
   canLogin: (token: string) => Promise<boolean>;
-  getTibberConsumption: (year: number, month: number) => Promise<TibberRoot>;
+  getTibberConsumption: (year: number, month: number, homeId: string) => Promise<TibberRoot>;
 }
 
 export const useTibberEndpoint = (): UseTibberEndpoint => {
-  const { tibberToken, homeId } = useAuthContext();
+  const { tokens } = useAuthContext();
+  const tibberToken = tokens.tibberToken;
 
   const getHomes = async (token: string) => {
     const query = `{
@@ -64,7 +65,7 @@ export const useTibberEndpoint = (): UseTibberEndpoint => {
     return true;
   };
 
-  const getTibberConsumption = async (year: number, month: number): Promise<TibberRoot> => {
+  const getTibberConsumption = async (year: number, month: number, homeId: string): Promise<TibberRoot> => {
     const daysInMonth = getDaysInMonth(new Date(year, month));
     const cursor = getCursor(year, month + 1);
 
