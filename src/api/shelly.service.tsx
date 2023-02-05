@@ -29,7 +29,8 @@ export interface UseShellyEndpoint {
 }
 
 export const useShellyEndpoint = (): UseShellyEndpoint => {
-  const { shellyToken } = useAuthContext();
+  const { tokens } = useAuthContext();
+  const shellyToken = tokens.shellyToken;
   const navigate = useNavigate();
 
   const getDevices = async (token: string): Promise<ShellyDevice[]> => {

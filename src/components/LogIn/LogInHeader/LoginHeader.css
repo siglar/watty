@@ -1,0 +1,18 @@
+.login-wrapper {
+    display: flex;
+    flex-direction: column;
+    max-width: 720px;
+    width: 80vw;
+    gap: 1rem;
+}
+
+.login-header {
+    display: flex;
+    max-height: 100px;
+    gap: 1rem;
+}
+
+img {
+    height: 100px;
+    width: 100px;
+}

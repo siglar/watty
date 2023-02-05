@@ -1,8 +1,13 @@
 import { FC } from 'react';
-import ShellyLogin from '../components/ShellyLogin/ShellyLogin';
+import LogIn from '../components/LogIn/LogIn';
+import LoginHeader from '../components/LogIn/LogInHeader/LoginHeader';
 
 const LandingPage: FC = () => {
-  return <ShellyLogin />;
+  return (
+    <LoginHeader>
+      <LogIn />
+    </LoginHeader>
+  );
 };
 
 export default LandingPage;

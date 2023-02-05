@@ -6,7 +6,7 @@ import { useShellyEndpoint } from '../api/shelly.service';
 import { useTibberEndpoint } from '../api/tibber.service';
 import ConsumptionView from '../components/ConsumptionView/ConsumptionView';
 import MonthPicker from '../components/MonthPicker/MonthPicker';
-import { useAuthContext } from '../context/auth.context';
+import { useDevicesContext } from '../context/devices.context';
 
 const ConsumptionPage: FC = () => {
   const navigate = useNavigate();
@@ -15,9 +15,9 @@ const ConsumptionPage: FC = () => {
   const [month, setMonth] = useState<number>(new Date().getMonth());
   const [year, setYear] = useState<number>(new Date().getFullYear());
 
-  const { homeId } = useAuthContext();
   const { getConsumption } = useShellyEndpoint();
   const { getTibberConsumption } = useTibberEndpoint();
+  const { home } = useDevicesContext();
 
   if (!deviceId) {
     navigate('/');
@@ -25,17 +25,19 @@ const ConsumptionPage: FC = () => {
   }
 
   const { data: shellyConsumption, isRefetching: shellyLoading } = useQuery(
-    ['SHELLY, CONSUMPTION', year, month, homeId, deviceId],
+    ['SHELLY, CONSUMPTION', year, month, home.id, deviceId],
     async () => await getConsumption(deviceId, year, month),
     {
+      enabled: Boolean(home.id),
       keepPreviousData: true
     }
   );
 
   const { data: tibberData, isRefetching: tibberLoading } = useQuery(
-    ['TIBBER, CONSUMPTION', year, month, homeId, deviceId],
-    async () => await getTibberConsumption(year, month),
+    ['TIBBER, CONSUMPTION', year, month, home.id, deviceId],
+    async () => await getTibberConsumption(year, month, home.id),
     {
+      enabled: Boolean(home.id),
       keepPreviousData: true
     }
   );

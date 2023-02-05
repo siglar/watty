@@ -12,6 +12,7 @@ import ConsumptionHeader from '../ConsumptionHeader/ConsumptionHeader';
 import { LoadingOverlay } from '@mantine/core';
 import { useOptionsContext } from '../../context/options.context';
 import React from 'react';
+import { DrawerContextProvider } from '../../context/drawer.context';
 
 interface ConsumptionViewProps {
   shellyConsumption: ShellyDataRoot;
@@ -68,23 +69,24 @@ const ConsumptionView: FC<ConsumptionViewProps> = (props: ConsumptionViewProps) 
 
   return (
     <>
-      <div className="options-container">
-        <LoadingOverlay visible={loading} overlayBlur={1} />
-        <NavigationRow />
+      <DrawerContextProvider>
+        <div className="options-container">
+          <LoadingOverlay visible={loading} overlayBlur={1} />          
 
-        <SummaryList averagePrice={averagePrice} consumedKw={consumedKw} priceForDevice={priceForDevice} />
+          <SummaryList averagePrice={averagePrice} consumedKw={consumedKw} priceForDevice={priceForDevice} />
 
-        <ConsumptionHeader
-          setShowConsumption={setShowConsumption}
-          setShowCost={setShowCost}
-          showConsumption={showConsumption}
-          showCost={showCost}
-        />
-      </div>
+          <ConsumptionHeader
+            setShowConsumption={setShowConsumption}
+            setShowCost={setShowCost}
+            showConsumption={showConsumption}
+            showCost={showCost}
+          />
+        </div>
 
-      <div className="consumption-wrapper">
-        <ConsumptionChart data={chartData} showConsumption={showConsumption} showCost={showCost} />
-      </div>
+        <div className="consumption-wrapper">
+          <ConsumptionChart data={chartData} showConsumption={showConsumption} showCost={showCost} />
+        </div>
+      </DrawerContextProvider>
     </>
   );
 };

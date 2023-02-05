@@ -1,14 +1,16 @@
+import { MantineProvider } from '@mantine/core';
+import { NotificationsProvider } from '@mantine/notifications';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { FC } from 'react';
-import './App.css';
-import { MantineProvider } from '@mantine/core';
-import { AuthContextProvider } from './context/auth.context';
-import LandingPage from './pages/Landing.page';
-import { AxiosError } from 'axios';
-import { OptionsContextProvider } from './context/options.context';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import ErrorPage from './pages/Error.page';
+import './App.css';
+import Register from './components/LogIn/Register/Register';
+import { AuthContextProvider } from './context/auth.context';
+import { DevicesContextProvider } from './context/devices.context';
+import { OptionsContextProvider } from './context/options.context';
 import ConsumptionPage from './pages/Consumption.page';
+import ErrorPage from './pages/Error.page';
+import LandingPage from './pages/Landing.page';
 
 const router = createBrowserRouter([
   {
@@ -17,17 +19,31 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />
   },
   {
-    path: 'devices/:deviceId',
-    element: <ConsumptionPage />
+    path: 'register',
+    element: <Register />
+  },
+  {
+    path: 'devices',
+    element: (
+      <DevicesContextProvider>
+        <ConsumptionPage />
+      </DevicesContextProvider>
+    ),
+    children: [
+      {
+        path: ':deviceId',
+        element: <ConsumptionPage />
+      }
+    ]
   }
 ]);
 
 const queryClient = new QueryClient();
 queryClient.setDefaultOptions({
   queries: {
-    staleTime: Infinity,
+    staleTime: 3600000,
     useErrorBoundary: false,
-    retry: (failureCount, error) => (error as AxiosError)?.response?.status !== 403 && failureCount <= 3
+    retry: false
   }
 });
 
@@ -37,7 +53,9 @@ const App: FC = () => {
       <MantineProvider withGlobalStyles withNormalizeCSS>
         <AuthContextProvider>
           <OptionsContextProvider>
-            <RouterProvider router={router} />
+            <NotificationsProvider position="bottom-center">
+              <RouterProvider router={router} />
+            </NotificationsProvider>
           </OptionsContextProvider>
         </AuthContextProvider>
       </MantineProvider>
