@@ -1,5 +1,5 @@
 import { Burger, Drawer, NavLink, Button } from '@mantine/core';
-import { IconActivity, IconArrowBack, IconChevronRight } from '@tabler/icons';
+import { IconActivity, IconArrowBack } from '@tabler/icons';
 import { createContext, Dispatch, FC, ReactNode, SetStateAction, useContext, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { useDevicesContext } from './devices.context';

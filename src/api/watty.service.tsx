@@ -1,7 +1,12 @@
 import axios from 'axios';
 import { Tokens } from '../models/tokens.models';
 
-const wattyApiUrl = 'https://localhost:7040';
+let wattyApiUrl = '';
+if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
+  wattyApiUrl = 'https://localhost:7040';
+} else {
+  wattyApiUrl = 'https://watty.azurewebsites.net';
+}
 
 export interface UseWattyEndpoint {
   /**
@@ -19,7 +24,7 @@ export interface UseWattyEndpoint {
    * Authorize user
    * @param email
    * @param password
-   * @returns Bearer token if authorized
+   * @returns Tokens if authorized
    */
   authorize: (email: string, password: string) => Promise<Tokens>;
 }
