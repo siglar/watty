@@ -40,7 +40,7 @@ const SummaryList: FC<SummaryListProps> = (props: SummaryListProps) => {
               </ThemeIcon>
             }
           >
-            Price for device <b>{priceForDevice.toFixed(0)} kr</b>
+            Price for device: <b>{priceForDevice.toFixed(0)} kr</b>
           </List.Item>
         </List>
       </div>
