@@ -1,4 +1,4 @@
-import { TextInput, Checkbox, Group, Button, LoadingOverlay } from '@mantine/core';
+import { TextInput, Group, Button, LoadingOverlay } from '@mantine/core';
 import { useForm, isNotEmpty, isEmail } from '@mantine/form';
 import { AxiosError } from 'axios';
 import { FC, useState } from 'react';
@@ -33,7 +33,8 @@ const LogIn: FC = () => {
   useQuery(
     ['SHELLY', 'DEVICES', tokens.shellyToken],
     async () => {
-      return await getDevices(tokens.shellyToken);
+      const result = await getDevices(tokens.shellyToken);
+      return result.sort((a, b) => a.label.localeCompare(b.label));
     },
     { enabled: Boolean(tokens.shellyToken) && isLoggedIn, onSuccess: (devices) => navigate(`/devices/${devices[0].value}`) }
   );
@@ -62,9 +63,6 @@ const LogIn: FC = () => {
   return (
     <>
       <LoadingOverlay visible={isLoading} overlayBlur={1} />
-      <Group position="right" mt="md">
-        <Checkbox mt="md" label="Skip login" />
-      </Group>
 
       <form onSubmit={form.onSubmit((values) => login(values.email, values.password))}>
         <TextInput type="email" withAsterisk label="Email" placeholder="Your email" {...form.getInputProps('email')} />

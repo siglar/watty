@@ -1,7 +1,7 @@
-import { MantineProvider } from '@mantine/core';
+import { ColorScheme, ColorSchemeProvider, MantineProvider } from '@mantine/core';
 import { NotificationsProvider } from '@mantine/notifications';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import './App.css';
 import Register from './components/LogIn/Register/Register';
@@ -48,17 +48,22 @@ queryClient.setDefaultOptions({
 });
 
 const App: FC = () => {
+  const [colorScheme, setColorScheme] = useState<ColorScheme>((localStorage.getItem('colorScheme') as ColorScheme) ?? 'light');
+  const toggleColorScheme = (value?: ColorScheme) => setColorScheme(value || (colorScheme === 'dark' ? 'light' : 'dark'));
+
   return (
     <QueryClientProvider client={queryClient}>
-      <MantineProvider withGlobalStyles withNormalizeCSS>
-        <AuthContextProvider>
-          <OptionsContextProvider>
-            <NotificationsProvider position="bottom-center">
-              <RouterProvider router={router} />
-            </NotificationsProvider>
-          </OptionsContextProvider>
-        </AuthContextProvider>
-      </MantineProvider>
+      <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
+        <MantineProvider theme={{ colorScheme }} withGlobalStyles withNormalizeCSS>
+          <AuthContextProvider>
+            <OptionsContextProvider>
+              <NotificationsProvider position="bottom-center">
+                <RouterProvider router={router} />
+              </NotificationsProvider>
+            </OptionsContextProvider>
+          </AuthContextProvider>
+        </MantineProvider>
+      </ColorSchemeProvider>
     </QueryClientProvider>
   );
 };

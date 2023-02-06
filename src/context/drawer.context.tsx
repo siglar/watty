@@ -1,6 +1,6 @@
-import { Burger, Drawer, NavLink, Button } from '@mantine/core';
-import { IconActivity, IconArrowBack } from '@tabler/icons';
-import { createContext, Dispatch, FC, ReactNode, SetStateAction, useContext, useState } from 'react';
+import { Burger, Drawer, NavLink, Button, ActionIcon, useMantineColorScheme } from '@mantine/core';
+import { IconActivity, IconArrowBack, IconMoonStars, IconSun } from '@tabler/icons';
+import { createContext, Dispatch, FC, ReactNode, SetStateAction, useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { useDevicesContext } from './devices.context';
 
@@ -26,6 +26,13 @@ export const DrawerContextProvider: FC<ProviderProps> = (props: ProviderProps) =
   const { deviceId } = useParams();
   const navigate = useNavigate();
 
+  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+  const dark = colorScheme === 'dark';
+
+  useEffect(() => {
+    localStorage.setItem('colorScheme', colorScheme);
+  }, [colorScheme]);
+
   const changeDevice = (deviceId: string) => {
     navigate(`/devices/${deviceId}`);
     setOpened(false);
@@ -41,15 +48,29 @@ export const DrawerContextProvider: FC<ProviderProps> = (props: ProviderProps) =
       <div
         style={{
           display: 'flex',
-          justifyContent: 'space-between',
           alignItems: 'center',
           width: '100%',
           marginBottom: '1rem',
-          padding: '0 1rem 0 1rem'
+          padding: '0 1rem 0 1rem',
+          gap: '12px',
+          borderStyle: 'solid',
+          borderWidth: '0 0 1px 0',
+          borderColor: '#666666'
         }}
       >
-        <h4>{devices.find((d) => d.value === deviceId)?.label}</h4>
-        <Burger opened={opened} onClick={() => setOpened(!opened)} title={'Select device'} />
+        <div style={{ display: 'flex', flexDirection: 'row', width: '100%', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <Burger color="#228be6" opened={opened} onClick={() => setOpened(!opened)} title={'Select device'}></Burger>
+            <h4 style={{ cursor: 'pointer' }} onClick={() => setOpened(!opened)}>
+              {devices.find((d) => d.value === deviceId)?.label}
+            </h4>
+          </div>
+          <div style={{ display: 'flex' }}>
+            <ActionIcon variant="outline" color={dark ? 'orange' : 'blue'} onClick={() => toggleColorScheme()} title="Toggle color scheme">
+              {dark ? <IconSun size={18} /> : <IconMoonStars size={18} />}
+            </ActionIcon>
+          </div>
+        </div>
       </div>
 
       <Drawer opened={opened} onClose={() => setOpened(false)} size="xl" withCloseButton={false}>
@@ -58,6 +79,7 @@ export const DrawerContextProvider: FC<ProviderProps> = (props: ProviderProps) =
             Back to login
           </Button>
         </div>
+
         {devices.map((device, index) => {
           return (
             <NavLink

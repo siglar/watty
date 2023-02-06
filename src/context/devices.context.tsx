@@ -33,7 +33,7 @@ export const DevicesContextProvider: FC<ProviderProps> = (props: ProviderProps) 
   const { data: devices, isLoading: devicesLoading } = useQuery(
     ['SHELLY', 'DEVICES', tokens.shellyToken],
     async () => {
-      let result = await getDevices(tokens.shellyToken);
+      const result = await getDevices(tokens.shellyToken);
       return result.sort((a, b) => a.label.localeCompare(b.label));
     },
     { enabled: Boolean(tokens.shellyToken), onSuccess: (devices) => setDevice(devices[0]) }

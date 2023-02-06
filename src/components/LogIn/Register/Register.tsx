@@ -1,5 +1,5 @@
 import { TextInput, Text, Group, Button, PasswordInput, Popover, Progress, Notification, LoadingOverlay } from '@mantine/core';
-import { useForm } from '@mantine/form';
+import { isEmail, useForm } from '@mantine/form';
 import { IconArrowBack, IconCheck } from '@tabler/icons';
 import { FC, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -22,7 +22,7 @@ const Register: FC = () => {
     },
 
     validate: {
-      email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email')
+      email: isEmail('Invalid email')
     }
   });
 

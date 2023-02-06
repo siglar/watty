@@ -1,3 +1,4 @@
+import { useMantineColorScheme } from '@mantine/styles';
 import React from 'react';
 import { FC } from 'react';
 import { Bar, ComposedChart, LabelList, Line, ResponsiveContainer, Tooltip, TooltipProps, XAxis } from 'recharts';
@@ -14,6 +15,9 @@ interface ConsumptionChartProps {
 const ConsumptionChart: FC<ConsumptionChartProps> = (props: ConsumptionChartProps) => {
   const { data, showConsumption, showCost } = props;
 
+  const { colorScheme } = useMantineColorScheme();
+  const dark = colorScheme === 'dark';
+
   const renderTooltip = (content: TooltipProps<ValueType, NameType>) => {
     if (content.payload && content.payload.length > 0) {
       return (
@@ -26,7 +30,7 @@ const ConsumptionChart: FC<ConsumptionChartProps> = (props: ConsumptionChartProp
             style={{
               margin: '0 0',
               padding: '3px 7.5px',
-              backgroundColor: 'white',
+              backgroundColor: dark ? '#1A1B1E' : 'white',
               borderBottom: '#bbb 1.5px solid'
             }}
           >
@@ -36,8 +40,8 @@ const ConsumptionChart: FC<ConsumptionChartProps> = (props: ConsumptionChartProp
             style={{
               margin: '0 0',
               padding: '3px 7.5px',
-              backgroundColor: 'white',
-              color: '#ff7300'
+              backgroundColor: dark ? '#1A1B1E' : 'white',
+              color: 'orange'
             }}
           >
             Cost: {content.payload[0].payload.cost.toFixed(2)} kr
@@ -46,8 +50,8 @@ const ConsumptionChart: FC<ConsumptionChartProps> = (props: ConsumptionChartProp
             style={{
               margin: '0 0',
               padding: '3px 7.5px',
-              backgroundColor: 'white',
-              color: '#413ea0'
+              backgroundColor: dark ? '#1A1B1E' : 'white',
+              color: '#1971C2'
             }}
           >
             Consumption: {content.payload[0].payload.consumption.toFixed(2)} kWh
@@ -56,7 +60,7 @@ const ConsumptionChart: FC<ConsumptionChartProps> = (props: ConsumptionChartProp
             style={{
               margin: '0 0',
               padding: '3px 7.5px',
-              backgroundColor: 'white'
+              backgroundColor: dark ? '#1A1B1E' : 'white'
             }}
           >
             Kilowatt price: {(content.payload[0].payload.kWPrice * 100).toFixed(1)} øre
@@ -93,8 +97,8 @@ const ConsumptionChart: FC<ConsumptionChartProps> = (props: ConsumptionChartProp
           hide={!showCost}
           type="monotone"
           dataKey="cost"
-          stroke="#ff7300"
-          dot={showConsumption ? undefined : (CustomDot as any)}
+          stroke="orange"
+          dot={showConsumption ? undefined : <CustomDot />}
           activeDot={showConsumption}
         />
       </ComposedChart>
