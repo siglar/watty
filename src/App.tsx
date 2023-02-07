@@ -5,23 +5,35 @@ import React from 'react';
 import { FC, useState } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import './App.css';
-import Register from './components/LogIn/Register/Register';
 import { AuthContextProvider } from './context/auth.context';
 import { DevicesContextProvider } from './context/devices.context';
 import { OptionsContextProvider } from './context/options.context';
-import ErrorPage from './pages/Error.page';
-import LandingPage from './pages/Landing.page';
 const ConsumptionPage = React.lazy(() => import('./pages/Consumption.page'));
+const LandingPage = React.lazy(() => import('./pages/Landing.page'));
+const ErrorPage = React.lazy(() => import('./pages/Error.page'));
+const Register = React.lazy(() => import('./components/LogIn/Register/Register'));
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <LandingPage />,
-    errorElement: <ErrorPage />
+    element: (
+      <React.Suspense fallback={<LoadingOverlay visible overlayBlur={1} />}>
+        <LandingPage />
+      </React.Suspense>
+    ),
+    errorElement: (
+      <React.Suspense fallback={<LoadingOverlay visible overlayBlur={1} />}>
+        <ErrorPage />
+      </React.Suspense>
+    )
   },
   {
     path: 'register',
-    element: <Register />
+    element: (
+      <React.Suspense fallback={<LoadingOverlay visible overlayBlur={1} />}>
+        <Register />
+      </React.Suspense>
+    )
   },
   {
     path: 'devices',
