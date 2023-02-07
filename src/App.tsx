@@ -1,6 +1,7 @@
-import { ColorScheme, ColorSchemeProvider, MantineProvider } from '@mantine/core';
+import { ColorScheme, ColorSchemeProvider, LoadingOverlay, MantineProvider } from '@mantine/core';
 import { NotificationsProvider } from '@mantine/notifications';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import React from 'react';
 import { FC, useState } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import './App.css';
@@ -8,9 +9,9 @@ import Register from './components/LogIn/Register/Register';
 import { AuthContextProvider } from './context/auth.context';
 import { DevicesContextProvider } from './context/devices.context';
 import { OptionsContextProvider } from './context/options.context';
-import ConsumptionPage from './pages/Consumption.page';
 import ErrorPage from './pages/Error.page';
 import LandingPage from './pages/Landing.page';
+const ConsumptionPage = React.lazy(() => import('./pages/Consumption.page'));
 
 const router = createBrowserRouter([
   {
@@ -25,9 +26,11 @@ const router = createBrowserRouter([
   {
     path: 'devices',
     element: (
-      <DevicesContextProvider>
-        <ConsumptionPage />
-      </DevicesContextProvider>
+      <React.Suspense fallback={<LoadingOverlay visible overlayBlur={1} />}>
+        <DevicesContextProvider>
+          <ConsumptionPage />
+        </DevicesContextProvider>
+      </React.Suspense>
     ),
     children: [
       {
