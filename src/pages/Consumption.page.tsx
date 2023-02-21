@@ -2,11 +2,10 @@ import { Loader } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import { FC, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
-import { useShellyEndpoint } from '../api/shelly.service';
-import { useTibberEndpoint } from '../api/tibber.service';
+import { useWattyEndpoint } from '../api/watty.service';
 import ConsumptionView from '../components/ConsumptionView/ConsumptionView';
 import MonthPicker from '../components/MonthPicker/MonthPicker';
-import { useDevicesContext } from '../context/devices.context';
+import { useAuthContext } from '../context/auth.context';
 
 const ConsumptionPage: FC = () => {
   const navigate = useNavigate();
@@ -15,43 +14,30 @@ const ConsumptionPage: FC = () => {
   const [month, setMonth] = useState<number>(new Date().getMonth());
   const [year, setYear] = useState<number>(new Date().getFullYear());
 
-  const { getConsumption } = useShellyEndpoint();
-  const { getTibberConsumption } = useTibberEndpoint();
-  const { home } = useDevicesContext();
+  const { tokens } = useAuthContext();
+  const { getConsumption } = useWattyEndpoint();
 
   if (!deviceId) {
     navigate('/');
     return null;
   }
 
-  const { data: shellyConsumption, isRefetching: shellyLoading } = useQuery(
-    ['SHELLY, CONSUMPTION', year, month, home.id, deviceId],
-    async () => await getConsumption(deviceId, year, month),
-    {
-      enabled: Boolean(home.id),
-      keepPreviousData: true
-    }
+  const { data: consumption, isLoading: consumptionLoading } = useQuery(
+    ['WATTY', 'CONSUMPTION', 'NO5', 'Day', deviceId, year, month],
+    async () => await getConsumption('NO5', 'Day', deviceId, year, month),
+    { enabled: Boolean(tokens.wattyToken) }
   );
 
-  const { data: tibberData, isRefetching: tibberLoading } = useQuery(
-    ['TIBBER, CONSUMPTION', year, month, home.id, deviceId],
-    async () => await getTibberConsumption(year, month, home.id),
-    {
-      enabled: Boolean(home.id),
-      keepPreviousData: true
-    }
-  );
-
-  if (!shellyConsumption || !tibberData) return <Loader />;
+  if (!consumption || consumptionLoading) return <Loader />;
 
   localStorage.setItem('device', deviceId);
 
   return (
     <>
-      {shellyConsumption.data.total <= 0 || !tibberData.data.viewer.home.consumption ? (
+      {consumption.length <= 0 ? (
         <p>No data for selected period</p>
       ) : (
-        <ConsumptionView loading={shellyLoading || tibberLoading} tibberData={tibberData} shellyConsumption={shellyConsumption} />
+        <ConsumptionView loading={consumptionLoading} consumption={consumption} />
       )}
 
       <MonthPicker month={month} setMonth={setMonth} year={year} setYear={setYear} />

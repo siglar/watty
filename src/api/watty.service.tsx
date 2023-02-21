@@ -1,5 +1,10 @@
 import axios from 'axios';
+import { useAuthContext } from '../context/auth.context';
+import { StromAggregationEnum } from '../enums/stromAggregation.enum';
+import { StromZoneEnum } from '../enums/stromZone.enum';
+import { getFirstDay, getLastDay } from '../helpers/date.helpers';
 import { Tokens } from '../models/tokens.models';
+import { ConsumptionDay } from '../models/Watty/consumptionDay';
 
 let wattyApiUrl = '';
 if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
@@ -27,9 +32,27 @@ export interface UseWattyEndpoint {
    * @returns Tokens if authorized
    */
   authorize: (email: string, password: string) => Promise<Tokens>;
+
+  /**
+   * Get prices with consumption for a zone from one date to another
+   * @param stromZoneEnum
+   * @param deviceId
+   * @param year
+   * @param month
+   * @returns Consumption data
+   */
+  getConsumption: (
+    stromZoneEnum: StromZoneEnum,
+    aggregation: StromAggregationEnum,
+    deviceId: string,
+    year: number,
+    month: number
+  ) => Promise<ConsumptionDay[]>;
 }
 
 export const useWattyEndpoint = (): UseWattyEndpoint => {
+  const { tokens } = useAuthContext();
+
   const addUser = async (email: string, name: string, password: string, shellyToken: string, tibberToken: string): Promise<boolean> => {
     const result = await axios({
       url: `${wattyApiUrl}/User/Auth/Add`,
@@ -59,5 +82,30 @@ export const useWattyEndpoint = (): UseWattyEndpoint => {
     return result.data;
   };
 
-  return { addUser, authorize };
+  const getConsumption = async (
+    stromZoneEnum: StromZoneEnum,
+    aggregation: StromAggregationEnum,
+    deviceId: string,
+    year: number,
+    month: number
+  ): Promise<ConsumptionDay[]> => {
+    const firstDay = getFirstDay(year, month);
+    const lastDay = getLastDay(year, month);
+
+    const result = await axios({
+      url: `${wattyApiUrl}/Strom/consumption/${stromZoneEnum}`,
+      method: 'GET',
+      params: {
+        aggregation: aggregation,
+        deviceId: deviceId,
+        from: firstDay,
+        to: lastDay
+      },
+      headers: { Authorization: tokens.wattyToken }
+    });
+
+    return result.data;
+  };
+
+  return { addUser, authorize, getConsumption };
 };
