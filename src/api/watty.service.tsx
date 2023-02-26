@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { format } from 'date-fns';
 import { useAuthContext } from '../context/auth.context';
 import { StromAggregationEnum } from '../enums/stromAggregation.enum';
 import { StromZoneEnum } from '../enums/stromZone.enum';
@@ -20,10 +21,9 @@ export interface UseWattyEndpoint {
    * @param name
    * @param password
    * @param shellyToken
-   * @param tibberToken
    * @returns True if user added
    */
-  addUser: (email: string, name: string, password: string, shellyToken: string, tibberToken: string) => Promise<boolean>;
+  addUser: (email: string, name: string, password: string, shellyToken: string) => Promise<boolean>;
 
   /**
    * Authorize user
@@ -53,7 +53,7 @@ export interface UseWattyEndpoint {
 export const useWattyEndpoint = (): UseWattyEndpoint => {
   const { tokens } = useAuthContext();
 
-  const addUser = async (email: string, name: string, password: string, shellyToken: string, tibberToken: string): Promise<boolean> => {
+  const addUser = async (email: string, name: string, password: string, shellyToken: string): Promise<boolean> => {
     const result = await axios({
       url: `${wattyApiUrl}/User/Auth/Add`,
       method: 'POST',
@@ -61,8 +61,7 @@ export const useWattyEndpoint = (): UseWattyEndpoint => {
         email: email,
         name: name,
         password: password,
-        shellyToken: shellyToken,
-        tibberToken: tibberToken
+        shellyToken: shellyToken
       }
     });
 
@@ -90,7 +89,13 @@ export const useWattyEndpoint = (): UseWattyEndpoint => {
     month: number
   ): Promise<ConsumptionDay[]> => {
     const firstDay = getFirstDay(year, month);
-    const lastDay = getLastDay(year, month);
+
+    const currentDate = new Date();
+    let lastDay: string;
+
+    const isCurrentMonth = currentDate.getFullYear() === year && currentDate.getMonth() === month;
+
+    isCurrentMonth ? (lastDay = format(currentDate, 'yyyy-MM-dd')) : (lastDay = getLastDay(year, month));
 
     const result = await axios({
       url: `${wattyApiUrl}/Strom/consumption/${stromZoneEnum}`,

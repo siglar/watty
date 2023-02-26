@@ -22,23 +22,23 @@ const ConsumptionPage: FC = () => {
     return null;
   }
 
-  const { data: consumption, isLoading: consumptionLoading } = useQuery(
-    ['WATTY', 'CONSUMPTION', 'NO5', 'Day', deviceId, year, month],
-    async () => await getConsumption('NO5', 'Day', deviceId, year, month),
-    { enabled: Boolean(tokens.wattyToken) }
+  const {
+    data: consumption,
+    isLoading: consumptionLoading,
+    isRefetching: consumptionRefetching
+  } = useQuery(
+    ['WATTY', 'CONSUMPTION', 'NO5', 'Hour', deviceId, year, month],
+    async () => await getConsumption('NO5', 'Hour', deviceId, year, month),
+    { enabled: Boolean(tokens.wattyToken), keepPreviousData: true }
   );
-
-  if (!consumption || consumptionLoading) return <Loader />;
 
   localStorage.setItem('device', deviceId);
 
+  if (consumptionLoading) return <Loader />;
+
   return (
     <>
-      {consumption.length <= 0 ? (
-        <p>No data for selected period</p>
-      ) : (
-        <ConsumptionView loading={consumptionLoading} consumption={consumption} />
-      )}
+      {!consumption ? <p>No data for selected period</p> : <ConsumptionView loading={consumptionRefetching} consumption={consumption} />}
 
       <MonthPicker month={month} setMonth={setMonth} year={year} setYear={setYear} />
     </>

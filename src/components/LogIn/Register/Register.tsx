@@ -17,8 +17,7 @@ const Register: FC = () => {
       email: '',
       password: '',
       name: '',
-      shellyToken: '',
-      tibberToken: ''
+      shellyToken: ''
     },
 
     validate: {
@@ -56,10 +55,10 @@ const Register: FC = () => {
   const strength = getStrength(password);
   const color = strength === 100 ? 'teal' : strength > 50 ? 'yellow' : 'red';
 
-  const register = async (email: string, name: string, password: string, shellyToken: string, tibberToken: string) => {
+  const register = async (email: string, name: string, password: string, shellyToken: string) => {
     try {
       setIsLoading(true);
-      const success = await addUser(email, name, password, shellyToken, tibberToken);
+      const success = await addUser(email, name, password, shellyToken);
 
       if (success) {
         navigate('/');
@@ -94,10 +93,10 @@ const Register: FC = () => {
           <Text>
             <i>Power save mode</i> will automatically switch off selected devices when the price is at its highest.
           </Text>
-          <Text>To do this, Watty needs to save your Shelly and Tibber token. Don't worry though; they are encrypted and kept safe.</Text>
+          <Text>To do this, Watty needs to save your Shelly token. Don't worry though, it's encrypted and kept safe.</Text>
         </Notification>
 
-        <form onSubmit={form.onSubmit((values) => register(values.email, values.name, password, values.shellyToken, values.tibberToken))}>
+        <form onSubmit={form.onSubmit((values) => register(values.email, values.name, password, values.shellyToken))}>
           <TextInput type="email" withAsterisk label="Email" placeholder="Your email" {...form.getInputProps('email')} />
           <Popover opened={popoverOpened} position="bottom" width="target" transition="pop">
             <Popover.Target>
@@ -127,14 +126,6 @@ const Register: FC = () => {
             label="Shelly token"
             placeholder="Your Shelly token"
             {...form.getInputProps('shellyToken')}
-          />
-
-          <TextInput
-            type="password"
-            withAsterisk
-            label="Tibber token"
-            placeholder="Your Tibber token"
-            {...form.getInputProps('tibberToken')}
           />
 
           <Group position="right" mt="md">
