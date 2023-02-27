@@ -37,7 +37,7 @@ const ConsumptionView: FC<ConsumptionViewProps> = (props: ConsumptionViewProps) 
   const [showConsumption, setShowConsumption] = useState<boolean>(false);
 
   const consumedKw = Number(consumption.reduce((pv, cv) => pv + cv.totalConsumptionInKwh, 0).toFixed(2));
-  const priceForDevice = Number(consumption.reduce((pv, cv) => pv + cv.totalPriceForDay, 0).toFixed(2));
+  const priceForDevice = Number(chartData.reduce((pv, cv) => pv + cv.cost, 0).toFixed(2));
   const averagePrice = Number(((consumption.reduce((pv, cv) => pv + cv.averageKwhPrice, 0) / consumption.length) * 100).toFixed(2));
 
   return (
