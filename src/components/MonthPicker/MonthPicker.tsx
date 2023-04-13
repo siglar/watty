@@ -1,5 +1,5 @@
 import { ActionIcon } from '@mantine/core';
-import { IconArrowLeft, IconArrowRight } from '@tabler/icons';
+import { IconArrowLeft, IconArrowRight } from '@tabler/icons-react';
 import { Dispatch, FC, SetStateAction } from 'react';
 import './MonthPicker.css';
 

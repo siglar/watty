@@ -6,7 +6,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useWattyEndpoint } from '../../api/watty.service';
 import { useAuthContext } from '../../context/auth.context';
 import { showNotification } from '@mantine/notifications';
-import { IconX } from '@tabler/icons';
+import { IconX } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useShellyEndpoint } from '../../api/shelly.service';
 

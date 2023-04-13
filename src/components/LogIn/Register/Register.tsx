@@ -1,6 +1,6 @@
 import { TextInput, Text, Group, Button, PasswordInput, Popover, Progress, Notification, LoadingOverlay } from '@mantine/core';
 import { isEmail, useForm } from '@mantine/form';
-import { IconArrowBack, IconCheck } from '@tabler/icons';
+import { IconArrowBack, IconCheck } from '@tabler/icons-react';
 import { FC, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useWattyEndpoint } from '../../../api/watty.service';

@@ -1,5 +1,5 @@
 import { List, ThemeIcon } from '@mantine/core';
-import { IconSun, IconCurrencyKroneDanish, IconDevices } from '@tabler/icons';
+import { IconSun, IconCurrencyKroneDanish, IconDevices } from '@tabler/icons-react';
 import { FC } from 'react';
 
 interface SummaryListProps {
