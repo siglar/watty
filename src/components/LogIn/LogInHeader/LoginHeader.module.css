@@ -1,4 +1,4 @@
-.login-wrapper {
+.loginWrapper {
     display: flex;
     flex-direction: column;
     max-width: 720px;
@@ -6,7 +6,7 @@
     gap: 1rem;
 }
 
-.login-header {
+.loginHeader {
     display: flex;
     max-height: 100px;
     gap: 1rem;

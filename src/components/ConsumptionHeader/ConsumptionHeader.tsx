@@ -1,7 +1,7 @@
 import { Switch } from '@mantine/core';
 import { FC } from 'react';
 import { useOptionsContext } from '../../context/options.context';
-import './ConsumptionHeader.css';
+import styles from './ConsumptionHeader.module.css';
 
 interface ConsumptionHeaderProps {
   showCost: boolean;
@@ -16,7 +16,7 @@ const ConsumptionHeader: FC<ConsumptionHeaderProps> = (props: ConsumptionHeaderP
   const { withElectricitySupport, setWithElectricitySupport } = useOptionsContext();
 
   return (
-    <div className="consumption-header">
+    <div className={styles.consumptionHeader}>
       <Switch
         label="With electricity support"
         checked={withElectricitySupport}

@@ -1,5 +1,5 @@
 import { FC, ReactNode } from 'react';
-import './LoginHeader.css';
+import styles from './LoginHeader.module.css';
 import logo from '../../../assets/logo.jpg';
 
 type LoginHeaderProps = {
@@ -8,8 +8,8 @@ type LoginHeaderProps = {
 
 const LoginHeader: FC<LoginHeaderProps> = (props: LoginHeaderProps) => {
   return (
-    <div className="login-wrapper">
-      <div className="login-header">
+    <div className={styles.loginWrapper}>
+      <div className={styles.loginHeader}>
         <img src={logo} alt="Watty logo" />
         <article>
           <p>Welcome to Watty</p>

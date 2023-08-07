@@ -1,7 +1,7 @@
 import { ActionIcon } from '@mantine/core';
 import { IconArrowLeft, IconArrowRight } from '@tabler/icons-react';
 import { Dispatch, FC, SetStateAction } from 'react';
-import './MonthPicker.css';
+import styles from './MonthPicker.module.css';
 
 const months = [
   { value: '0', label: 'January' },
@@ -55,12 +55,12 @@ const MonthPicker: FC<MonthPickerProps> = (props: MonthPickerProps) => {
   };
 
   return (
-    <div className="button-row">
+    <div className={styles.buttonRow}>
       <ActionIcon onClick={pageToPrevious} variant="subtle" title="Previous month" size="xl" color="blue">
         <IconArrowLeft />
       </ActionIcon>
 
-      <div className="date-actions">
+      <div className={styles.dateActions}>
         <p>{year}</p>
         <p>{months.find((m) => m.value === month.toString())?.label}</p>
       </div>

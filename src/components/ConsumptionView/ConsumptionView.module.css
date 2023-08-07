@@ -1,4 +1,4 @@
-.options-container {
+.optionsContainer {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -8,7 +8,7 @@
   padding-right: 1rem;
 }
 
-.consumption-wrapper {
+.consumptionWrapper {
   margin-top: 2rem;
   height: 320px;
   width: 100%;

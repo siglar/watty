@@ -1,6 +1,5 @@
 import { FC, useState } from 'react';
 import ConsumptionChart from '../ConsumptionChart/ConsumptionChart';
-import './ConsumptionView.css';
 import { calculateElectricitySupport } from '../../helpers/strom.helper';
 import { ChartData } from '../../models/chart.models';
 import SummaryList from '../SummaryList/SummaryList';
@@ -11,6 +10,7 @@ import React from 'react';
 import { DrawerContextProvider } from '../../context/drawer.context';
 import { ConsumptionDay } from '../../models/Watty/consumptionDay';
 import { format } from 'date-fns';
+import styles from './ConsumptionView.module.css';
 
 interface ConsumptionViewProps {
   consumption: ConsumptionDay[];
@@ -43,7 +43,7 @@ const ConsumptionView: FC<ConsumptionViewProps> = (props: ConsumptionViewProps) 
   return (
     <>
       <DrawerContextProvider>
-        <div className="options-container">
+        <div className={styles.optionsContainer}>
           <LoadingOverlay visible={loading} overlayBlur={1} />
 
           <SummaryList averagePrice={averagePrice} consumedKw={consumedKw} priceForDevice={priceForDevice} />
@@ -56,7 +56,7 @@ const ConsumptionView: FC<ConsumptionViewProps> = (props: ConsumptionViewProps) 
           />
         </div>
 
-        <div className="consumption-wrapper">
+        <div className={styles.consumptionWrapper}>
           <ConsumptionChart data={chartData} showConsumption={showConsumption} showCost={showCost} />
         </div>
       </DrawerContextProvider>
