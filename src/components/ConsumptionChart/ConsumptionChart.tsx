@@ -29,7 +29,7 @@ const ConsumptionChart: FC<ConsumptionChartProps> = (props: ConsumptionChartProp
             style={{
               margin: '0 0',
               padding: '3px 7.5px',
-              backgroundColor: dark ? '#1A1B1E' : 'white',
+              backgroundColor: dark ? '#2E2E2E' : 'white',
               borderBottom: '#bbb 1.5px solid'
             }}
           >
@@ -39,7 +39,7 @@ const ConsumptionChart: FC<ConsumptionChartProps> = (props: ConsumptionChartProp
             style={{
               margin: '0 0',
               padding: '3px 7.5px',
-              backgroundColor: dark ? '#1A1B1E' : 'white',
+              backgroundColor: dark ? '#2E2E2E' : 'white',
               color: 'orange'
             }}
           >
@@ -49,7 +49,7 @@ const ConsumptionChart: FC<ConsumptionChartProps> = (props: ConsumptionChartProp
             style={{
               margin: '0 0',
               padding: '3px 7.5px',
-              backgroundColor: dark ? '#1A1B1E' : 'white',
+              backgroundColor: dark ? '#2E2E2E' : 'white',
               color: '#1971C2'
             }}
           >
@@ -59,7 +59,7 @@ const ConsumptionChart: FC<ConsumptionChartProps> = (props: ConsumptionChartProp
             style={{
               margin: '0 0',
               padding: '3px 7.5px',
-              backgroundColor: dark ? '#1A1B1E' : 'white'
+              backgroundColor: dark ? '#2E2E2E' : 'white'
             }}
           >
             Kilowatt price: {(content.payload[0].payload.kWPrice * 100).toFixed(1)} øre
