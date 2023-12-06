@@ -1,12 +1,11 @@
-import { ColorScheme, ColorSchemeProvider, LoadingOverlay, MantineProvider } from '@mantine/core';
-import { NotificationsProvider } from '@mantine/notifications';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import React from 'react';
-import { FC, useState } from 'react';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import '@mantine/core/styles.css';
+import '@mantine/notifications/styles.css';
 import './App.css';
+import { LoadingOverlay, MantineProvider } from '@mantine/core';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import React, { FC } from 'react';
+import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { AuthContextProvider } from './context/auth.context';
-import { DevicesContextProvider } from './context/devices.context';
 import { OptionsContextProvider } from './context/options.context';
 const ConsumptionPage = React.lazy(() => import('./pages/Consumption.page'));
 const LandingPage = React.lazy(() => import('./pages/Landing.page'));
@@ -17,12 +16,12 @@ const router = createBrowserRouter([
   {
     path: '/',
     element: (
-      <React.Suspense fallback={<LoadingOverlay visible overlayBlur={1} />}>
+      <React.Suspense fallback={<LoadingOverlay visible overlayProps={{ blur: 1 }} />}>
         <LandingPage />
       </React.Suspense>
     ),
     errorElement: (
-      <React.Suspense fallback={<LoadingOverlay visible overlayBlur={1} />}>
+      <React.Suspense fallback={<LoadingOverlay visible overlayProps={{ blur: 1 }} />}>
         <ErrorPage />
       </React.Suspense>
     )
@@ -30,7 +29,7 @@ const router = createBrowserRouter([
   {
     path: 'register',
     element: (
-      <React.Suspense fallback={<LoadingOverlay visible overlayBlur={1} />}>
+      <React.Suspense fallback={<LoadingOverlay visible overlayProps={{ blur: 1 }} />}>
         <Register />
       </React.Suspense>
     )
@@ -38,10 +37,8 @@ const router = createBrowserRouter([
   {
     path: 'devices',
     element: (
-      <React.Suspense fallback={<LoadingOverlay visible overlayBlur={1} />}>
-        <DevicesContextProvider>
-          <ConsumptionPage />
-        </DevicesContextProvider>
+      <React.Suspense fallback={<LoadingOverlay visible overlayProps={{ blur: 1 }} />}>
+        <ConsumptionPage />
       </React.Suspense>
     ),
     children: [
@@ -57,28 +54,20 @@ const queryClient = new QueryClient();
 queryClient.setDefaultOptions({
   queries: {
     staleTime: 3600000,
-    useErrorBoundary: false,
     retry: false
   }
 });
 
 const App: FC = () => {
-  const [colorScheme, setColorScheme] = useState<ColorScheme>((localStorage.getItem('colorScheme') as ColorScheme) ?? 'light');
-  const toggleColorScheme = (value?: ColorScheme) => setColorScheme(value || (colorScheme === 'dark' ? 'light' : 'dark'));
-
   return (
     <QueryClientProvider client={queryClient}>
-      <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
-        <MantineProvider theme={{ colorScheme }} withGlobalStyles withNormalizeCSS>
-          <AuthContextProvider>
-            <OptionsContextProvider>
-              <NotificationsProvider position="bottom-center">
-                <RouterProvider router={router} />
-              </NotificationsProvider>
-            </OptionsContextProvider>
-          </AuthContextProvider>
-        </MantineProvider>
-      </ColorSchemeProvider>
+      <MantineProvider>
+        <AuthContextProvider>
+          <OptionsContextProvider>
+            <RouterProvider router={router} />
+          </OptionsContextProvider>
+        </AuthContextProvider>
+      </MantineProvider>
     </QueryClientProvider>
   );
 };

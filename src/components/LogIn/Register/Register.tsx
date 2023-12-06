@@ -7,6 +7,7 @@ import { useWattyEndpoint } from '../../../api/watty.service';
 import LoginHeader from '../LogInHeader/LoginHeader';
 import PasswordRequirement from '../PasswordRequirement/PasswordRequirement';
 import { showNotification } from '@mantine/notifications';
+import registerStyles from './Register.module.css';
 
 const Register: FC = () => {
   const { addUser } = useWattyEndpoint();
@@ -76,17 +77,21 @@ const Register: FC = () => {
 
   return (
     <>
-      <LoadingOverlay visible={isLoading} overlayBlur={1} />
+      <LoadingOverlay visible={isLoading} overlayProps={{ blur: 1 }} />
       <LoginHeader>
-        <Group position="left" mt="md">
+        <Group mt="md">
           <Link to="/">
-            <Button leftIcon={<IconArrowBack />} variant="subtle">
+            <Button leftSection={<IconArrowBack />} variant="subtle">
               Back to login
             </Button>
           </Link>
         </Group>
 
-        <Notification disallowClose>
+        <Notification
+          classNames={{
+            closeButton: registerStyles.hideCloseButton
+          }}
+        >
           <Text>
             By registering you get access to the <i>power save mode</i>.
           </Text>
@@ -98,7 +103,7 @@ const Register: FC = () => {
 
         <form onSubmit={form.onSubmit((values) => register(values.email, values.name, password, values.shellyToken))}>
           <TextInput type="email" withAsterisk label="Email" placeholder="Your email" {...form.getInputProps('email')} />
-          <Popover opened={popoverOpened} position="bottom" width="target" transition="pop">
+          <Popover opened={popoverOpened} position="bottom" width="target" transitionProps={{ transition: 'pop' }}>
             <Popover.Target>
               <div onFocusCapture={() => setPopoverOpened(true)} onBlurCapture={() => setPopoverOpened(false)}>
                 <PasswordInput
@@ -128,7 +133,7 @@ const Register: FC = () => {
             {...form.getInputProps('shellyToken')}
           />
 
-          <Group position="right" mt="md">
+          <Group mt="md" style={{ display: 'flex', justifyContent: 'flex-end' }}>
             <Button type="submit">Register account</Button>
           </Group>
         </form>

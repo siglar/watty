@@ -1,14 +1,9 @@
-import { useMantineColorScheme } from '@mantine/styles';
-import { useQuery } from '@tanstack/react-query';
-import React from 'react';
-import { FC } from 'react';
-import { useParams } from 'react-router';
+import React, { FC } from 'react';
 import { Bar, ComposedChart, LabelList, Line, ResponsiveContainer, Tooltip, TooltipProps, XAxis } from 'recharts';
 import { NameType, ValueType } from 'recharts/types/component/DefaultTooltipContent';
-import { useWattyEndpoint } from '../../api/watty.service';
-import { useAuthContext } from '../../context/auth.context';
 import { ChartData } from '../../models/chart.models';
 import CustomDot from './CustomDot';
+import { useMantineColorScheme } from '@mantine/core';
 
 interface ConsumptionChartProps {
   data: ChartData[];

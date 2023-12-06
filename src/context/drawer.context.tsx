@@ -1,8 +1,11 @@
-import { Burger, Drawer, NavLink, Button, ActionIcon, useMantineColorScheme } from '@mantine/core';
+import { ActionIcon, Burger, Button, Drawer, LoadingOverlay, NavLink, useComputedColorScheme, useMantineColorScheme } from '@mantine/core';
 import { IconActivity, IconArrowBack, IconMoonStars, IconSun } from '@tabler/icons-react';
-import { createContext, Dispatch, FC, ReactNode, SetStateAction, useContext, useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { Dispatch, FC, ReactNode, SetStateAction, createContext, useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
-import { useDevicesContext } from './devices.context';
+import { useShellyEndpoint } from '../api/shelly.service';
+import { useAuthContext } from './auth.context';
+import { Tokens } from '../models/tokens.models';
 
 type ProviderProps = {
   children: ReactNode;
@@ -22,11 +25,23 @@ export const useDrawerContext = (): DrawerContextType => useContext(DrawerContex
 
 export const DrawerContextProvider: FC<ProviderProps> = (props: ProviderProps) => {
   const [opened, setOpened] = useState(false);
-  const { devices } = useDevicesContext();
   const { deviceId } = useParams();
   const navigate = useNavigate();
+  const { tokens, setTokens } = useAuthContext();
+  const { getDevices } = useShellyEndpoint();
 
-  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+  const { data: devices, isLoading: devicesLoading } = useQuery({
+    queryKey: ['SHELLY', 'DEVICES', tokens.shellyToken],
+    queryFn: async () => {
+      let result = await getDevices(tokens.shellyToken);
+      return result.sort((a, b) => a.label.localeCompare(b.label));
+    },
+    enabled: Boolean(tokens.shellyToken)
+  });
+
+  const isLoading = devicesLoading || !devices;
+  const { colorScheme, setColorScheme } = useMantineColorScheme();
+  const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
   const dark = colorScheme === 'dark';
 
   useEffect(() => {
@@ -37,6 +52,13 @@ export const DrawerContextProvider: FC<ProviderProps> = (props: ProviderProps) =
     navigate(`/devices/${deviceId}`);
     setOpened(false);
   };
+
+  const backToLogin = () => {
+    setTokens({} as Tokens);
+    navigate('/');
+  };
+
+  if (isLoading) return <LoadingOverlay visible={isLoading} overlayProps={{ blur: 1 }} />;
 
   return (
     <DrawerContext.Provider
@@ -66,7 +88,12 @@ export const DrawerContextProvider: FC<ProviderProps> = (props: ProviderProps) =
             </h4>
           </div>
           <div style={{ display: 'flex' }}>
-            <ActionIcon variant="outline" color={dark ? 'orange' : 'blue'} onClick={() => toggleColorScheme()} title="Toggle color scheme">
+            <ActionIcon
+              variant="outline"
+              color={dark ? 'orange' : 'blue'}
+              onClick={() => setColorScheme(computedColorScheme === 'light' ? 'dark' : 'light')}
+              title="Toggle color scheme"
+            >
               {dark ? <IconSun size={18} /> : <IconMoonStars size={18} />}
             </ActionIcon>
           </div>
@@ -75,7 +102,7 @@ export const DrawerContextProvider: FC<ProviderProps> = (props: ProviderProps) =
 
       <Drawer opened={opened} onClose={() => setOpened(false)} size="xl" withCloseButton={false}>
         <div style={{ paddingBottom: '1rem', paddingTop: '1rem' }}>
-          <Button onClick={() => navigate('/')} leftIcon={<IconArrowBack />} variant="subtle">
+          <Button onClick={backToLogin} leftSection={<IconArrowBack />} variant="subtle">
             Back to login
           </Button>
         </div>
@@ -85,7 +112,7 @@ export const DrawerContextProvider: FC<ProviderProps> = (props: ProviderProps) =
             <NavLink
               key={index}
               label={device.label}
-              icon={<IconActivity size={16} stroke={1.5} />}
+              leftSection={<IconActivity size={16} stroke={1.5} />}
               variant="filled"
               active={device.value === deviceId}
               onClick={() => changeDevice(devices.find((d) => d.value === device.value)?.value ?? '')}

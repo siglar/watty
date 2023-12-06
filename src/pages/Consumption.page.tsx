@@ -26,11 +26,12 @@ const ConsumptionPage: FC = () => {
     data: consumption,
     isLoading: consumptionLoading,
     isRefetching: consumptionRefetching
-  } = useQuery(
-    ['WATTY', 'CONSUMPTION', 'NO5', 'Hour', deviceId, year, month],
-    async () => await getConsumption('NO5', 'Hour', deviceId, year, month),
-    { enabled: Boolean(tokens.wattyToken), keepPreviousData: true }
-  );
+  } = useQuery({
+    queryKey: ['WATTY', 'CONSUMPTION', 'NO5', 'Hour', deviceId, year, month],
+    queryFn: async () => await getConsumption('NO5', 'Hour', deviceId, year, month),
+    enabled: Boolean(tokens.wattyToken),
+    placeholderData: (previousData) => previousData
+  });
 
   localStorage.setItem('device', deviceId);
 

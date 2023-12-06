@@ -1,14 +1,14 @@
-import { TextInput, Group, Button, LoadingOverlay } from '@mantine/core';
-import { useForm, isNotEmpty, isEmail } from '@mantine/form';
-import { AxiosError } from 'axios';
-import { FC, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useWattyEndpoint } from '../../api/watty.service';
-import { useAuthContext } from '../../context/auth.context';
+import { Button, Group, LoadingOverlay, TextInput } from '@mantine/core';
+import { isEmail, isNotEmpty, useForm } from '@mantine/form';
 import { showNotification } from '@mantine/notifications';
 import { IconX } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
+import { FC, useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useShellyEndpoint } from '../../api/shelly.service';
+import { useWattyEndpoint } from '../../api/watty.service';
+import { useAuthContext } from '../../context/auth.context';
 
 const LogIn: FC = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -30,14 +30,18 @@ const LogIn: FC = () => {
     }
   });
 
-  useQuery(
-    ['SHELLY', 'DEVICES', tokens.shellyToken],
-    async () => {
-      const result = await getDevices(tokens.shellyToken);
+  const { data: devices } = useQuery({
+    queryKey: ['SHELLY', 'DEVICES', tokens.shellyToken],
+    queryFn: async () => {
+      let result = await getDevices(tokens.shellyToken);
       return result.sort((a, b) => a.label.localeCompare(b.label));
     },
-    { enabled: Boolean(tokens.shellyToken) && isLoggedIn, onSuccess: (devices) => navigate(`/devices/${devices[0].value}`) }
-  );
+    enabled: Boolean(tokens.shellyToken) && isLoggedIn
+  });
+
+  useEffect(() => {
+    if (devices) navigate(`/devices/${devices[0].value}`);
+  }, [devices]);
 
   const login = async (email: string, password: string) => {
     try {
@@ -62,13 +66,13 @@ const LogIn: FC = () => {
 
   return (
     <>
-      <LoadingOverlay visible={isLoading} overlayBlur={1} />
+      <LoadingOverlay visible={isLoading} overlayProps={{ blur: 1 }} />
 
       <form onSubmit={form.onSubmit((values) => login(values.email, values.password))}>
         <TextInput type="email" withAsterisk label="Email" placeholder="Your email" {...form.getInputProps('email')} />
         <TextInput type="password" withAsterisk label="Password" placeholder="Your password" {...form.getInputProps('password')} />
 
-        <Group position="right" mt="md">
+        <Group mt="md" style={{ display: 'flex', justifyContent: 'flex-end' }}>
           <Link to="/register">
             <Button type="button" variant="subtle">
               Don't have an account? Register here

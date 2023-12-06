@@ -44,7 +44,7 @@ const ConsumptionView: FC<ConsumptionViewProps> = (props: ConsumptionViewProps) 
     <>
       <DrawerContextProvider>
         <div className={styles.optionsContainer}>
-          <LoadingOverlay visible={loading} overlayBlur={1} />
+          <LoadingOverlay visible={loading} overlayProps={{ blur: 1 }} />
 
           <SummaryList averagePrice={averagePrice} consumedKw={consumedKw} priceForDevice={priceForDevice} />
 

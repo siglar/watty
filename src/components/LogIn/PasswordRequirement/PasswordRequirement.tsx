@@ -11,7 +11,7 @@ const PasswordRequirement: FC<PasswordRequirementProps> = (props: PasswordRequir
   const { meets, label } = props;
 
   return (
-    <Text color={meets ? 'teal' : 'red'} sx={{ display: 'flex', alignItems: 'center' }} mt={7} size="sm">
+    <Text c={meets ? 'teal' : 'red'} style={{ display: 'flex', alignItems: 'center' }} mt={7} size="sm">
       {meets ? <IconCheck size={14} /> : <IconX size={14} />} <Box ml={10}>{label}</Box>
     </Text>
   );
