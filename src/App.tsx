@@ -7,6 +7,7 @@ import React, { FC } from 'react';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { AuthContextProvider } from './context/auth.context';
 import { OptionsContextProvider } from './context/options.context';
+import { Notifications } from '@mantine/notifications';
 const ConsumptionPage = React.lazy(() => import('./pages/Consumption.page'));
 const LandingPage = React.lazy(() => import('./pages/Landing.page'));
 const ErrorPage = React.lazy(() => import('./pages/Error.page'));
@@ -62,6 +63,7 @@ const App: FC = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <MantineProvider>
+        <Notifications position={'bottom-center'} autoClose={10000} />
         <AuthContextProvider>
           <OptionsContextProvider>
             <RouterProvider router={router} />
