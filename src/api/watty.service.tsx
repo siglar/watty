@@ -9,7 +9,7 @@ import { ConsumptionDay } from '../models/Watty/consumptionDay';
 
 let wattyApiUrl = '';
 if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
-  wattyApiUrl = 'https://localhost:7040';
+  wattyApiUrl = 'https://watty.azurewebsites.net';
 } else {
   wattyApiUrl = 'https://watty.azurewebsites.net';
 }
