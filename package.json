@@ -12,7 +12,7 @@
         "@emotion/react": "^11.14.0",
         "@mantine/core": "^8.1.2",
         "@mantine/form": "^8.1.2",
-        "@mantine/hooks": "^8.1.2",
+        "@mantine/hooks": "^8.2.5",
         "@mantine/notifications": "^8.1.2",
         "@tabler/icons-react": "^3.34.0",
         "@tanstack/react-query": "^5.81.5",
