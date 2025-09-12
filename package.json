@@ -16,7 +16,7 @@
         "@mantine/notifications": "^8.1.2",
         "@tabler/icons-react": "^3.34.0",
         "@tanstack/react-query": "^5.81.5",
-        "axios": "^1.10.0",
+        "axios": "^1.12.0",
         "date-fns": "^4.1.0",
         "react": "^19.1.0",
         "react-dom": "^19.1.0",
