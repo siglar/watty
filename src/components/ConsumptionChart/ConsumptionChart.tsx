@@ -1,5 +1,15 @@
 import React, { FC } from 'react';
-import { Bar, ComposedChart, LabelList, Line, ResponsiveContainer, Tooltip, TooltipProps, XAxis } from 'recharts';
+import {
+  Bar,
+  ComposedChart,
+  LabelList,
+  Line,
+  ResponsiveContainer,
+  Tooltip,
+  TooltipContentProps,
+  XAxis
+} from 'recharts';
+import type { RenderableText } from 'recharts';
 import { NameType, ValueType } from 'recharts/types/component/DefaultTooltipContent';
 import { ChartData } from '../../models/chart.models';
 import CustomDot from './CustomDot';
@@ -17,7 +27,7 @@ const ConsumptionChart: FC<ConsumptionChartProps> = (props: ConsumptionChartProp
   const { colorScheme } = useMantineColorScheme();
   const dark = colorScheme === 'dark';
 
-  const renderTooltip = (content: TooltipProps<ValueType, NameType>) => {
+  const renderTooltip = (content: TooltipContentProps<ValueType, NameType>) => {
     if (content.payload && content.payload.length > 0) {
       return (
         <article
@@ -70,8 +80,11 @@ const ConsumptionChart: FC<ConsumptionChartProps> = (props: ConsumptionChartProp
     return null;
   };
 
-  const labelFormatter = (value: number) => {
-    return value.toFixed(0);
+  const labelFormatter = (label: RenderableText): RenderableText => {
+    if (typeof label === 'number') {
+      return label.toFixed(0);
+    }
+    return label;
   };
 
   return (

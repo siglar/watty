@@ -10,26 +10,26 @@
     },
     "dependencies": {
         "@emotion/react": "^11.14.0",
-        "@mantine/core": "^8.1.2",
-        "@mantine/form": "^8.1.2",
-        "@mantine/hooks": "^8.1.2",
-        "@mantine/notifications": "^8.1.2",
-        "@tabler/icons-react": "^3.34.0",
-        "@tanstack/react-query": "^5.81.5",
-        "axios": "^1.10.0",
+        "@mantine/core": "^8.3.15",
+        "@mantine/form": "^8.3.15",
+        "@mantine/hooks": "^8.3.15",
+        "@mantine/notifications": "^8.3.15",
+        "@tabler/icons-react": "^3.38.0",
+        "@tanstack/react-query": "^5.90.21",
+        "axios": "^1.13.6",
         "date-fns": "^4.1.0",
-        "react": "^19.1.0",
-        "react-dom": "^19.1.0",
-        "react-router": "^7.6.3",
-        "react-router-dom": "^7.6.3",
-        "recharts": "^2.15.3"
+        "react": "^19.2.4",
+        "react-dom": "^19.2.4",
+        "react-router": "^7.13.1",
+        "react-router-dom": "^7.13.1",
+        "recharts": "^3.7.0"
     },
     "devDependencies": {
-        "@types/react": "^19.1.8",
-        "@types/react-dom": "^19.1.6",
-        "@vitejs/plugin-react": "^4.6.0",
-        "typescript": "^5.8.3",
-        "vite": "^7.0.0",
-        "vite-plugin-checker": "^0.9.3"
+        "@types/react": "^19.2.14",
+        "@types/react-dom": "^19.2.3",
+        "@vitejs/plugin-react": "^5.1.4",
+        "typescript": "^5.9.3",
+        "vite": "^7.3.1",
+        "vite-plugin-checker": "^0.12.0"
     }
 }
