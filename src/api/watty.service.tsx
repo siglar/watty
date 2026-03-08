@@ -4,6 +4,11 @@ import { useAuthContext } from '../context/auth.context';
 import { StromAggregationEnum } from '../enums/stromAggregation.enum';
 import { StromZoneEnum } from '../enums/stromZone.enum';
 import { getFirstDay, getLastDay } from '../helpers/date.helpers';
+import {
+  FylkeLookupResult,
+  GridCompanyLookupResult,
+  UserSettings
+} from '../models/lookup.models';
 import { Tokens } from '../models/tokens.models';
 import { ConsumptionDay } from '../models/Watty/consumptionDay';
 
@@ -48,6 +53,32 @@ export interface UseWattyEndpoint {
     year: number,
     month: number
   ) => Promise<ConsumptionDay[]>;
+
+  /**
+   * Get user settings (fylke and grid company)
+   * @returns User settings for the authenticated user
+   */
+  getSettings: () => Promise<UserSettings>;
+
+  /**
+   * Update user settings (fylke and grid company)
+   * @param settings - The settings to save
+   */
+  updateSettings: (settings: UserSettings) => Promise<void>;
+
+  /**
+   * Search fylker (counties) by name
+   * @param search - Optional search query to filter fylker
+   * @returns Matching fylker with fylkesnummer and fylkesnavn
+   */
+  getFylker: (search?: string) => Promise<FylkeLookupResult[]>;
+
+  /**
+   * Search electricity distribution companies by name
+   * @param search - Search query (minimum 2 characters)
+   * @returns Matching grid companies with organisasjonsnummer and navn
+   */
+  getGridCompanies: (search: string) => Promise<GridCompanyLookupResult[]>;
 }
 
 export const useWattyEndpoint = (): UseWattyEndpoint => {
@@ -55,7 +86,7 @@ export const useWattyEndpoint = (): UseWattyEndpoint => {
 
   const addUser = async (email: string, name: string, password: string, shellyToken: string): Promise<boolean> => {
     const result = await axios({
-      url: `${wattyApiUrl}/User/Auth/Add`,
+      url: `${wattyApiUrl}/user/add`,
       method: 'POST',
       data: {
         email: email,
@@ -70,7 +101,7 @@ export const useWattyEndpoint = (): UseWattyEndpoint => {
 
   const authorize = async (email: string, password: string): Promise<Tokens> => {
     const result = await axios({
-      url: `${wattyApiUrl}/User/Auth/Authorize`,
+      url: `${wattyApiUrl}/user/authorize`,
       method: 'POST',
       data: {
         email: email,
@@ -112,5 +143,41 @@ export const useWattyEndpoint = (): UseWattyEndpoint => {
     return result.data;
   };
 
-  return { addUser, authorize, getConsumption };
+  const getSettings = async (): Promise<UserSettings> => {
+    const result = await axios({
+      url: `${wattyApiUrl}/user/settings`,
+      method: 'GET',
+      headers: { Authorization: tokens.wattyToken }
+    });
+    return result.data;
+  };
+
+  const updateSettings = async (settings: UserSettings): Promise<void> => {
+    await axios({
+      url: `${wattyApiUrl}/user/settings`,
+      method: 'PUT',
+      data: settings,
+      headers: { Authorization: tokens.wattyToken }
+    });
+  };
+
+  const getFylker = async (search?: string): Promise<FylkeLookupResult[]> => {
+    const result = await axios({
+      url: `${wattyApiUrl}/lookup/fylke`,
+      method: 'GET',
+      params: search ? { search } : {}
+    });
+    return result.data;
+  };
+
+  const getGridCompanies = async (search: string): Promise<GridCompanyLookupResult[]> => {
+    const result = await axios({
+      url: `${wattyApiUrl}/lookup/grid-company`,
+      method: 'GET',
+      params: { search }
+    });
+    return result.data;
+  };
+
+  return { addUser, authorize, getConsumption, getSettings, updateSettings, getFylker, getGridCompanies };
 };

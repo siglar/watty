@@ -12,6 +12,7 @@ const ConsumptionPage = React.lazy(() => import('./pages/Consumption.page'));
 const LandingPage = React.lazy(() => import('./pages/Landing.page'));
 const ErrorPage = React.lazy(() => import('./pages/Error.page'));
 const Register = React.lazy(() => import('./components/LogIn/Register/Register'));
+const SettingsPage = React.lazy(() => import('./pages/Settings.page'));
 
 const router = createBrowserRouter([
   {
@@ -48,6 +49,14 @@ const router = createBrowserRouter([
         element: <ConsumptionPage />
       }
     ]
+  },
+  {
+    path: 'settings',
+    element: (
+      <React.Suspense fallback={<LoadingOverlay visible overlayProps={{ blur: 1 }} />}>
+        <SettingsPage />
+      </React.Suspense>
+    )
   }
 ]);
 
