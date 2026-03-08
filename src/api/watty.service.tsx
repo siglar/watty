@@ -86,7 +86,7 @@ export const useWattyEndpoint = (): UseWattyEndpoint => {
 
   const addUser = async (email: string, name: string, password: string, shellyToken: string): Promise<boolean> => {
     const result = await axios({
-      url: `${wattyApiUrl}/User/Auth/Add`,
+      url: `${wattyApiUrl}/user/add`,
       method: 'POST',
       data: {
         email: email,
@@ -101,7 +101,7 @@ export const useWattyEndpoint = (): UseWattyEndpoint => {
 
   const authorize = async (email: string, password: string): Promise<Tokens> => {
     const result = await axios({
-      url: `${wattyApiUrl}/User/Auth/Authorize`,
+      url: `${wattyApiUrl}/user/authorize`,
       method: 'POST',
       data: {
         email: email,
