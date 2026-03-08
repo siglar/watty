@@ -1,5 +1,5 @@
 import { ActionIcon, Burger, Button, Drawer, LoadingOverlay, NavLink, useComputedColorScheme, useMantineColorScheme } from '@mantine/core';
-import { IconActivity, IconArrowBack, IconMoonStars, IconSun } from '@tabler/icons-react';
+import { IconActivity, IconArrowBack, IconMoonStars, IconSettings, IconSun } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { Dispatch, FC, ReactNode, SetStateAction, createContext, useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
@@ -53,6 +53,11 @@ export const DrawerContextProvider: FC<ProviderProps> = (props: ProviderProps) =
     setOpened(false);
   };
 
+  const goToSettings = () => {
+    navigate('/settings');
+    setOpened(false);
+  };
+
   const backToLogin = () => {
     setTokens({} as Tokens);
     navigate('/');
@@ -87,7 +92,10 @@ export const DrawerContextProvider: FC<ProviderProps> = (props: ProviderProps) =
               {devices.find((d) => d.value === deviceId)?.label}
             </h4>
           </div>
-          <div style={{ display: 'flex' }}>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <ActionIcon variant="outline" color={dark ? 'orange' : 'blue'} onClick={goToSettings} title="Settings">
+              <IconSettings size={18} />
+            </ActionIcon>
             <ActionIcon
               variant="outline"
               color={dark ? 'orange' : 'blue'}
@@ -124,3 +132,4 @@ export const DrawerContextProvider: FC<ProviderProps> = (props: ProviderProps) =
     </DrawerContext.Provider>
   );
 };
+
