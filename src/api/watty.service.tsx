@@ -7,6 +7,7 @@ import { getFirstDay, getLastDay } from '../helpers/date.helpers';
 import {
   FylkeLookupResult,
   GridCompanyLookupResult,
+  PowerTierLookupResult,
   UserSettings
 } from '../models/lookup.models';
 import { Tokens } from '../models/tokens.models';
@@ -79,6 +80,20 @@ export interface UseWattyEndpoint {
    * @returns Matching grid companies with organisasjonsnummer and navn
    */
   getGridCompanies: (search: string) => Promise<GridCompanyLookupResult[]>;
+
+  /**
+   * Get power tier options for nettleie
+   * @returns Power tier options (2–5 kW, 10–15 kW, etc.)
+   */
+  getPowerTiers: () => Promise<PowerTierLookupResult[]>;
+
+  /**
+   * Get monthly grid fee (fastledd) for the authenticated user
+   * @param year - Optional year (defaults to current)
+   * @param month - Optional month (defaults to current)
+   * @returns Monthly grid fee in kr
+   */
+  getFastledd: (year?: number, month?: number) => Promise<{ fastleddKrPerMonth: number }>;
 }
 
 export const useWattyEndpoint = (): UseWattyEndpoint => {
@@ -179,5 +194,39 @@ export const useWattyEndpoint = (): UseWattyEndpoint => {
     return result.data;
   };
 
-  return { addUser, authorize, getConsumption, getSettings, updateSettings, getFylker, getGridCompanies };
+  const getPowerTiers = async (): Promise<PowerTierLookupResult[]> => {
+    const result = await axios({
+      url: `${wattyApiUrl}/lookup/power-tier`,
+      method: 'GET'
+    });
+    return result.data;
+  };
+
+  const getFastledd = async (
+    year?: number,
+    month?: number
+  ): Promise<{ fastleddKrPerMonth: number }> => {
+    const params: Record<string, number> = {};
+    if (year != null) params.year = year;
+    if (month != null) params.month = month;
+    const result = await axios({
+      url: `${wattyApiUrl}/lookup/fastledd`,
+      method: 'GET',
+      params: Object.keys(params).length > 0 ? params : undefined,
+      headers: { Authorization: tokens.wattyToken }
+    });
+    return result.data;
+  };
+
+  return {
+    addUser,
+    authorize,
+    getConsumption,
+    getSettings,
+    updateSettings,
+    getFylker,
+    getGridCompanies,
+    getPowerTiers,
+    getFastledd
+  };
 };

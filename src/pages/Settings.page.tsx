@@ -12,7 +12,7 @@ import { useAuthContext } from '../context/auth.context';
 const SettingsPage: FC = () => {
   const navigate = useNavigate();
   const { tokens } = useAuthContext();
-  const { getSettings, updateSettings, getFylker, getGridCompanies } = useWattyEndpoint();
+  const { getSettings, updateSettings, getFylker, getGridCompanies, getPowerTiers } = useWattyEndpoint();
   const queryClient = useQueryClient();
 
   const [gridCompanySearch, setGridCompanySearch] = useState('');
@@ -23,7 +23,8 @@ const SettingsPage: FC = () => {
       fylkeNr: '',
       fylkeNavn: '',
       organisasjonsNr: '',
-      organisasjonsNavn: ''
+      organisasjonsNavn: '',
+      powerTier: null as number | null
     },
     validate: {
       fylkeNr: isNotEmpty('Select a fylke'),
@@ -51,9 +52,12 @@ const SettingsPage: FC = () => {
     queryKey: ['LOOKUP', 'GRID-COMPANY', debouncedSearch],
     queryFn: () => getGridCompanies(debouncedSearch),
     enabled:
-      debouncedSearch.length >= 2 &&
-      debouncedSearch !== form.values.organisasjonsNavn &&
-      debouncedSearch !== selectedGridCompanyLabel
+      debouncedSearch.length >= 2 && debouncedSearch !== form.values.organisasjonsNavn && debouncedSearch !== selectedGridCompanyLabel
+  });
+
+  const { data: powerTiers } = useQuery({
+    queryKey: ['LOOKUP', 'POWER-TIER'],
+    queryFn: getPowerTiers
   });
 
   useEffect(() => {
@@ -69,7 +73,8 @@ const SettingsPage: FC = () => {
         fylkeNr: settings.fylkeNr ?? '',
         fylkeNavn: settings.fylkeNavn ?? '',
         organisasjonsNr: settings.organisasjonsNr ?? '',
-        organisasjonsNavn: settings.organisasjonsNavn ?? ''
+        organisasjonsNavn: settings.organisasjonsNavn ?? '',
+        powerTier: settings.powerTier ?? null
       });
     }
   }, [settings]);
@@ -83,15 +88,20 @@ const SettingsPage: FC = () => {
       navn: c.navn
     })) ?? [];
 
+  const powerTierOptions = powerTiers?.map((p) => ({ value: String(p.value), label: p.label })) ?? [];
+
   const handleSubmit = form.onSubmit(async (values) => {
     try {
       await updateSettings({
         fylkeNr: values.fylkeNr,
         fylkeNavn: values.fylkeNavn,
         organisasjonsNr: values.organisasjonsNr,
-        organisasjonsNavn: values.organisasjonsNavn
+        organisasjonsNavn: values.organisasjonsNavn,
+        powerTier: values.powerTier ?? undefined
       });
       queryClient.invalidateQueries({ queryKey: ['WATTY', 'SETTINGS'] });
+      queryClient.invalidateQueries({ queryKey: ['WATTY', 'CONSUMPTION'] });
+      queryClient.invalidateQueries({ queryKey: ['WATTY', 'FASTLEDD'] });
       showNotification({
         icon: <IconCheck size={18} />,
         color: 'green',
@@ -172,6 +182,15 @@ const SettingsPage: FC = () => {
               form.setFieldValue('organisasjonsNr', value ?? '');
               form.setFieldValue('organisasjonsNavn', option?.navn ?? '');
             }}
+          />
+
+          <Select
+            label="Power tier (nettleie)"
+            placeholder="Select power tier"
+            data={powerTierOptions}
+            clearable
+            value={form.values.powerTier != null ? String(form.values.powerTier) : null}
+            onChange={(value) => form.setFieldValue('powerTier', value ? Number(value) : null)}
           />
 
           <Button type="submit">Save</Button>
