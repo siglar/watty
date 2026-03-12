@@ -15,21 +15,29 @@ import styles from './ConsumptionView.module.css';
 interface ConsumptionViewProps {
   consumption: ConsumptionDay[];
   loading: boolean;
+  fastleddKrPerMonth: number;
 }
 
 const ConsumptionView: FC<ConsumptionViewProps> = (props: ConsumptionViewProps) => {
-  const { consumption, loading } = props;
+  const { consumption, loading, fastleddKrPerMonth } = props;
 
   const { withElectricitySupport } = useOptionsContext();
 
   const chartData: ChartData[] = consumption.map((c) => {
+    const totalCost = withElectricitySupport
+      ? calculateElectricitySupport(c.averageKwhPrice * 100, c.totalConsumptionInKwh, c.totalPriceForDay)
+      : c.totalPriceForDay;
+    const consumptionKwh = c.totalConsumptionInKwh;
+    const totalKwhPrice = consumptionKwh > 0 ? totalCost / consumptionKwh : 0;
     return {
-      consumption: c.totalConsumptionInKwh,
-      cost: withElectricitySupport
-        ? calculateElectricitySupport(c.averageKwhPrice * 100, c.totalConsumptionInKwh, c.totalPriceForDay)
-        : c.totalPriceForDay,
+      consumption: consumptionKwh,
+      spotPriceCost: c.totalSpotPriceCost,
+      nettleieCost: c.totalNettleieCost,
+      cost: totalCost,
       date: format(new Date(c.date), 'dd.MMM'),
-      kWPrice: c.averageKwhPrice
+      spotKwhPrice: c.averageSpotPricePerKwh,
+      nettleieKwhPrice: c.averageNettleiePricePerKwh,
+      totalKwhPrice
     } as ChartData;
   });
 
@@ -46,7 +54,12 @@ const ConsumptionView: FC<ConsumptionViewProps> = (props: ConsumptionViewProps) 
         <div className={styles.optionsContainer}>
           <LoadingOverlay visible={loading} overlayProps={{ blur: 1 }} />
 
-          <SummaryList averagePrice={averagePrice} consumedKw={consumedKw} priceForDevice={priceForDevice} />
+          <SummaryList
+            averagePrice={averagePrice}
+            consumedKw={consumedKw}
+            priceForDevice={priceForDevice}
+            fastleddKrPerMonth={fastleddKrPerMonth}
+          />
 
           <ConsumptionHeader
             setShowConsumption={setShowConsumption}

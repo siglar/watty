@@ -13,3 +13,8 @@
   height: 320px;
   width: 100%;
 }
+
+.consumptionWrapper:focus:not(:focus-visible),
+.consumptionWrapper *:focus:not(:focus-visible) {
+  outline: none;
+}

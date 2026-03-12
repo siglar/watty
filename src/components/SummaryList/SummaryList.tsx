@@ -1,15 +1,16 @@
 import { List, ThemeIcon } from '@mantine/core';
-import { IconSun, IconCurrencyKroneDanish, IconDevices } from '@tabler/icons-react';
+import { IconSun, IconCurrencyKroneDanish, IconDevices, IconPlug } from '@tabler/icons-react';
 import { FC } from 'react';
 
 interface SummaryListProps {
   consumedKw: number;
   averagePrice: number;
   priceForDevice: number;
+  fastleddKrPerMonth: number;
 }
 
 const SummaryList: FC<SummaryListProps> = (props: SummaryListProps) => {
-  const { averagePrice, consumedKw, priceForDevice } = props;
+  const { averagePrice, consumedKw, priceForDevice, fastleddKrPerMonth } = props;
 
   return (
     <>
@@ -40,6 +41,15 @@ const SummaryList: FC<SummaryListProps> = (props: SummaryListProps) => {
           }
         >
           Price for device: <b>{priceForDevice.toFixed(0)} kr</b>
+        </List.Item>
+        <List.Item
+          icon={
+            <ThemeIcon color="blue" size={24} radius="md">
+              <IconPlug size={16} />
+            </ThemeIcon>
+          }
+        >
+          Monthly grid fee: <b>{fastleddKrPerMonth.toFixed(0)} kr</b>
         </List.Item>
       </List>
     </>

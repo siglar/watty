@@ -21,6 +21,10 @@ interface ConsumptionChartProps {
   showConsumption: boolean;
 }
 
+const SPOT_COLOR = '#2563EB';
+const NETTLEIE_COLOR = '#059669';
+const TOTAL_COLOR = '#EA580C';
+
 const ConsumptionChart: FC<ConsumptionChartProps> = (props: ConsumptionChartProps) => {
   const { data, showConsumption, showCost } = props;
 
@@ -50,10 +54,30 @@ const ConsumptionChart: FC<ConsumptionChartProps> = (props: ConsumptionChartProp
               margin: '0 0',
               padding: '3px 7.5px',
               backgroundColor: dark ? '#2E2E2E' : 'white',
-              color: 'orange'
+              color: SPOT_COLOR
             }}
           >
-            Cost: {content.payload[0].payload.cost.toFixed(2)} kr
+            Spot: {content.payload[0].payload.spotPriceCost.toFixed(2)} kr
+          </p>
+          <p
+            style={{
+              margin: '0 0',
+              padding: '3px 7.5px',
+              backgroundColor: dark ? '#2E2E2E' : 'white',
+              color: NETTLEIE_COLOR
+            }}
+          >
+            Nettleie: {content.payload[0].payload.nettleieCost.toFixed(2)} kr
+          </p>
+          <p
+            style={{
+              margin: '0 0',
+              padding: '3px 7.5px',
+              backgroundColor: dark ? '#2E2E2E' : 'white',
+              color: TOTAL_COLOR
+            }}
+          >
+            Total: {content.payload[0].payload.cost.toFixed(2)} kr
           </p>
           <p
             style={{
@@ -69,10 +93,31 @@ const ConsumptionChart: FC<ConsumptionChartProps> = (props: ConsumptionChartProp
             style={{
               margin: '0 0',
               padding: '3px 7.5px',
-              backgroundColor: dark ? '#2E2E2E' : 'white'
+              backgroundColor: dark ? '#2E2E2E' : 'white',
+              color: SPOT_COLOR
             }}
           >
-            Kilowatt price: {(content.payload[0].payload.kWPrice * 100).toFixed(1)} øre
+            Kilowatt price (spot): {(content.payload[0].payload.spotKwhPrice * 100).toFixed(1)} øre
+          </p>
+          <p
+            style={{
+              margin: '0 0',
+              padding: '3px 7.5px',
+              backgroundColor: dark ? '#2E2E2E' : 'white',
+              color: NETTLEIE_COLOR
+            }}
+          >
+            Kilowatt price (nettleie): {(content.payload[0].payload.nettleieKwhPrice * 100).toFixed(1)} øre
+          </p>
+          <p
+            style={{
+              margin: '0 0',
+              padding: '3px 7.5px',
+              backgroundColor: dark ? '#2E2E2E' : 'white',
+              color: TOTAL_COLOR
+            }}
+          >
+            Kilowatt price (total): {(content.payload[0].payload.totalKwhPrice * 100).toFixed(1)} øre
           </p>
         </article>
       );
@@ -108,8 +153,29 @@ const ConsumptionChart: FC<ConsumptionChartProps> = (props: ConsumptionChartProp
           animationDuration={250}
           hide={!showCost}
           type="monotone"
+          dataKey="spotPriceCost"
+          name="Spot"
+          stroke={SPOT_COLOR}
+          dot={showConsumption ? undefined : <CustomDot />}
+          activeDot={showConsumption}
+        />
+        <Line
+          animationDuration={250}
+          hide={!showCost}
+          type="monotone"
+          dataKey="nettleieCost"
+          name="Nettleie"
+          stroke={NETTLEIE_COLOR}
+          dot={showConsumption ? undefined : <CustomDot />}
+          activeDot={showConsumption}
+        />
+        <Line
+          animationDuration={250}
+          hide={!showCost}
+          type="monotone"
           dataKey="cost"
-          stroke="orange"
+          name="Total"
+          stroke={TOTAL_COLOR}
           dot={showConsumption ? undefined : <CustomDot />}
           activeDot={showConsumption}
         />

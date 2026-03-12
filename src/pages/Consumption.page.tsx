@@ -15,7 +15,7 @@ const ConsumptionPage: FC = () => {
   const [year, setYear] = useState<number>(new Date().getFullYear());
 
   const { tokens } = useAuthContext();
-  const { getConsumption } = useWattyEndpoint();
+  const { getConsumption, getFastledd } = useWattyEndpoint();
 
   if (!deviceId) {
     navigate('/');
@@ -33,13 +33,28 @@ const ConsumptionPage: FC = () => {
     placeholderData: (previousData) => previousData
   });
 
+  const { data: fastledd } = useQuery({
+    queryKey: ['WATTY', 'FASTLEDD', year, month],
+    queryFn: async () => await getFastledd(year, month + 1),
+    enabled: Boolean(tokens.wattyToken),
+    placeholderData: (previousData) => previousData
+  });
+
   localStorage.setItem('device', deviceId);
 
   if (consumptionLoading) return <Loader />;
 
   return (
     <>
-      {!consumption ? <p>No data for selected period</p> : <ConsumptionView loading={consumptionRefetching} consumption={consumption} />}
+      {!consumption ? (
+        <p>No data for selected period</p>
+      ) : (
+        <ConsumptionView
+          loading={consumptionRefetching}
+          consumption={consumption}
+          fastleddKrPerMonth={fastledd?.fastleddKrPerMonth ?? 0}
+        />
+      )}
 
       <MonthPicker month={month} setMonth={setMonth} year={year} setYear={setYear} />
     </>
