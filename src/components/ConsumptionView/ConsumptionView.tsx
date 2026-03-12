@@ -1,6 +1,6 @@
 import { FC, useState } from 'react';
 import ConsumptionChart from '../ConsumptionChart/ConsumptionChart';
-import { calculateElectricitySupport } from '../../helpers/strom.helper';
+import { NORGESPRIS_NOK_PER_KWH } from '../../helpers/strom.helper';
 import { ChartData } from '../../models/chart.models';
 import SummaryList from '../SummaryList/SummaryList';
 import ConsumptionHeader from '../ConsumptionHeader/ConsumptionHeader';
@@ -21,21 +21,26 @@ interface ConsumptionViewProps {
 const ConsumptionView: FC<ConsumptionViewProps> = (props: ConsumptionViewProps) => {
   const { consumption, loading, fastleddKrPerMonth } = props;
 
-  const { withElectricitySupport } = useOptionsContext();
+  const { useNorgespris } = useOptionsContext();
 
   const chartData: ChartData[] = consumption.map((c) => {
-    const totalCost = withElectricitySupport
-      ? calculateElectricitySupport(c.averageKwhPrice * 100, c.totalConsumptionInKwh, c.totalPriceForDay)
-      : c.totalPriceForDay;
     const consumptionKwh = c.totalConsumptionInKwh;
+    const spotPriceCost = useNorgespris
+      ? consumptionKwh * NORGESPRIS_NOK_PER_KWH
+      : c.totalSpotPriceCost;
+    const totalCost = spotPriceCost + c.totalNettleieCost;
+    const spotKwhPrice = useNorgespris
+      ? NORGESPRIS_NOK_PER_KWH
+      : c.averageSpotPricePerKwh;
     const totalKwhPrice = consumptionKwh > 0 ? totalCost / consumptionKwh : 0;
+
     return {
       consumption: consumptionKwh,
-      spotPriceCost: c.totalSpotPriceCost,
+      spotPriceCost,
       nettleieCost: c.totalNettleieCost,
       cost: totalCost,
       date: format(new Date(c.date), 'dd.MMM'),
-      spotKwhPrice: c.averageSpotPricePerKwh,
+      spotKwhPrice,
       nettleieKwhPrice: c.averageNettleiePricePerKwh,
       totalKwhPrice
     } as ChartData;
@@ -46,7 +51,15 @@ const ConsumptionView: FC<ConsumptionViewProps> = (props: ConsumptionViewProps) 
 
   const consumedKw = Number(consumption.reduce((pv, cv) => pv + cv.totalConsumptionInKwh, 0).toFixed(2));
   const priceForDevice = Number(chartData.reduce((pv, cv) => pv + cv.cost, 0).toFixed(2));
-  const averagePrice = Number(((consumption.reduce((pv, cv) => pv + cv.averageKwhPrice, 0) / consumption.length) * 100).toFixed(2));
+  const averagePrice =
+    chartData.length > 0
+      ? Number(
+          (
+            (chartData.reduce((pv, cv) => pv + cv.totalKwhPrice, 0) / chartData.length) *
+            100
+          ).toFixed(2)
+        )
+      : 0;
 
   return (
     <>

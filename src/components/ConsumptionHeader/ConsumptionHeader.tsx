@@ -13,14 +13,14 @@ interface ConsumptionHeaderProps {
 const ConsumptionHeader: FC<ConsumptionHeaderProps> = (props: ConsumptionHeaderProps) => {
   const { showCost, setShowCost, setShowConsumption, showConsumption } = props;
 
-  const { withElectricitySupport, setWithElectricitySupport } = useOptionsContext();
+  const { useNorgespris, setUseNorgespris } = useOptionsContext();
 
   return (
     <div className={styles.consumptionHeader}>
       <Switch
-        label="With electricity support"
-        checked={withElectricitySupport}
-        onChange={(e) => setWithElectricitySupport(e.currentTarget.checked)}
+        label="Use Norgespris"
+        checked={useNorgespris}
+        onChange={(e) => setUseNorgespris(e.currentTarget.checked)}
       />
       <Switch label="Show cost (kr)" checked={showCost} onChange={(e) => setShowCost(e.target.checked)} />
       <Switch label="Show consumption (kWh)" checked={showConsumption} onChange={(e) => setShowConsumption(e.target.checked)} />

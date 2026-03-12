@@ -5,25 +5,25 @@ type ProviderProps = {
 };
 
 export type OptionsContextType = {
-  withElectricitySupport: boolean;
-  setWithElectricitySupport: Dispatch<SetStateAction<boolean>>;
+  useNorgespris: boolean;
+  setUseNorgespris: Dispatch<SetStateAction<boolean>>;
 };
 
 export const OptionsContext = createContext<OptionsContextType>({
-  withElectricitySupport: false,
-  setWithElectricitySupport: () => console.log('no provider')
+  useNorgespris: false,
+  setUseNorgespris: () => console.log('no provider')
 });
 
 export const useOptionsContext = (): OptionsContextType => useContext(OptionsContext);
 
 export const OptionsContextProvider: FC<ProviderProps> = (props: ProviderProps) => {
-  const [withElectricitySupport, setWithElectricitySupport] = useState(false);
+  const [useNorgespris, setUseNorgespris] = useState(false);
 
   return (
     <OptionsContext.Provider
       value={{
-        withElectricitySupport,
-        setWithElectricitySupport
+        useNorgespris,
+        setUseNorgespris
       }}
     >
       {props.children}
