@@ -1,0 +1,88 @@
+.tooltip {
+  padding: 10px 14px;
+  min-width: 180px;
+  border-radius: 8px;
+  background-color: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+[data-mantine-color-scheme='dark'] .tooltip {
+  background-color: #25262b;
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.tooltipHeader {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  color: #1a1b1e;
+}
+
+[data-mantine-color-scheme='dark'] .tooltipHeader {
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.tooltipRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 4px 0;
+  font-size: 14px;
+  color: #495057;
+}
+
+[data-mantine-color-scheme='dark'] .tooltipRow {
+  color: #868e96;
+}
+
+.tooltipRowValue {
+  font-weight: 600;
+}
+
+.tooltipRowSpot {
+  color: #2563eb;
+}
+
+.tooltipRowNettleie {
+  color: #059669;
+}
+
+.tooltipRowTotal {
+  color: #ea580c;
+}
+
+[data-mantine-color-scheme='dark'] .tooltipRowSpot {
+  color: #2563eb;
+}
+
+[data-mantine-color-scheme='dark'] .tooltipRowNettleie {
+  color: #059669;
+}
+
+[data-mantine-color-scheme='dark'] .tooltipRowTotal {
+  color: #ea580c;
+}
+
+.tooltipDivider {
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  margin: 8px 0;
+}
+
+[data-mantine-color-scheme='dark'] .tooltipDivider {
+  border-top-color: rgba(255, 255, 255, 0.08);
+}
+
+.tooltipSectionLabel {
+  font-size: 13px;
+  color: #495057;
+  margin-bottom: 4px;
+}
+
+[data-mantine-color-scheme='dark'] .tooltipSectionLabel {
+  color: #868e96;
+}

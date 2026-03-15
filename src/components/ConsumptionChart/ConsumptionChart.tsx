@@ -1,183 +1,108 @@
 import React, { FC } from 'react';
-import {
-  Bar,
-  ComposedChart,
-  LabelList,
-  Line,
-  ResponsiveContainer,
-  Tooltip,
-  TooltipContentProps,
-  XAxis
-} from 'recharts';
-import type { RenderableText } from 'recharts';
+import { Area, ComposedChart, ResponsiveContainer, Tooltip, TooltipContentProps, XAxis, YAxis } from 'recharts';
 import { NameType, ValueType } from 'recharts/types/component/DefaultTooltipContent';
 import { ChartData } from '../../models/chart.models';
 import CustomDot from './CustomDot';
-import { useMantineColorScheme } from '@mantine/core';
+import styles from './ConsumptionChart.module.css';
 
 interface ConsumptionChartProps {
   data: ChartData[];
-  showCost: boolean;
-  showConsumption: boolean;
 }
 
 const SPOT_COLOR = '#2563EB';
 const NETTLEIE_COLOR = '#059669';
 const TOTAL_COLOR = '#EA580C';
 
-const ConsumptionChart: FC<ConsumptionChartProps> = (props: ConsumptionChartProps) => {
-  const { data, showConsumption, showCost } = props;
+const CustomDotNoClip = Object.assign(
+  (props: Record<string, unknown>) => <CustomDot {...props} />,
+  { clipDot: false as const, r: 30 }
+);
 
-  const { colorScheme } = useMantineColorScheme();
-  const dark = colorScheme === 'dark';
+const ConsumptionChart: FC<ConsumptionChartProps> = (props: ConsumptionChartProps) => {
+  const { data } = props;
 
   const renderTooltip = (content: TooltipContentProps<ValueType, NameType>) => {
     if (content.payload && content.payload.length > 0) {
+      const payload = content.payload[0].payload;
+
+      const row = (key: string, label: string, value: string, colorClass?: string) => (
+        <div key={key} className={`${styles.tooltipRow} ${colorClass ?? ''}`.trim()}>
+          <span>{label}</span>
+          <span className={styles.tooltipRowValue}>{value}</span>
+        </div>
+      );
+
       return (
-        <article
-          style={{
-            border: '#bbb 1.5px solid'
-          }}
-        >
-          <p
-            style={{
-              margin: '0 0',
-              padding: '3px 7.5px',
-              backgroundColor: dark ? '#2E2E2E' : 'white',
-              borderBottom: '#bbb 1.5px solid'
-            }}
-          >
-            {content.payload[0].payload.date}
-          </p>
-          <p
-            style={{
-              margin: '0 0',
-              padding: '3px 7.5px',
-              backgroundColor: dark ? '#2E2E2E' : 'white',
-              color: SPOT_COLOR
-            }}
-          >
-            Spot: {content.payload[0].payload.spotPriceCost.toFixed(2)} kr
-          </p>
-          <p
-            style={{
-              margin: '0 0',
-              padding: '3px 7.5px',
-              backgroundColor: dark ? '#2E2E2E' : 'white',
-              color: NETTLEIE_COLOR
-            }}
-          >
-            Nettleie: {content.payload[0].payload.nettleieCost.toFixed(2)} kr
-          </p>
-          <p
-            style={{
-              margin: '0 0',
-              padding: '3px 7.5px',
-              backgroundColor: dark ? '#2E2E2E' : 'white',
-              color: TOTAL_COLOR
-            }}
-          >
-            Total: {content.payload[0].payload.cost.toFixed(2)} kr
-          </p>
-          <p
-            style={{
-              margin: '0 0',
-              padding: '3px 7.5px',
-              backgroundColor: dark ? '#2E2E2E' : 'white',
-              color: '#1971C2'
-            }}
-          >
-            Consumption: {content.payload[0].payload.consumption.toFixed(2)} kWh
-          </p>
-          <p
-            style={{
-              margin: '0 0',
-              padding: '3px 7.5px',
-              backgroundColor: dark ? '#2E2E2E' : 'white',
-              color: SPOT_COLOR
-            }}
-          >
-            Kilowatt price (spot): {(content.payload[0].payload.spotKwhPrice * 100).toFixed(1)} øre
-          </p>
-          <p
-            style={{
-              margin: '0 0',
-              padding: '3px 7.5px',
-              backgroundColor: dark ? '#2E2E2E' : 'white',
-              color: NETTLEIE_COLOR
-            }}
-          >
-            Kilowatt price (nettleie): {(content.payload[0].payload.nettleieKwhPrice * 100).toFixed(1)} øre
-          </p>
-          <p
-            style={{
-              margin: '0 0',
-              padding: '3px 7.5px',
-              backgroundColor: dark ? '#2E2E2E' : 'white',
-              color: TOTAL_COLOR
-            }}
-          >
-            Kilowatt price (total): {(content.payload[0].payload.totalKwhPrice * 100).toFixed(1)} øre
-          </p>
+        <article className={styles.tooltip}>
+          <div className={styles.tooltipHeader}>{payload.date}</div>
+
+          {row('consumption', 'Consumption', `${payload.consumption.toFixed(2)} kWh`)}
+
+          <div className={styles.tooltipDivider} />
+
+          {row('total-kr', 'Total', `${payload.cost.toFixed(2)} kr`, styles.tooltipRowTotal)}
+          {row('spot-kr', 'Spot', `${payload.spotPriceCost.toFixed(2)} kr`, styles.tooltipRowSpot)}
+          {row('nettleie-kr', 'Nettleie', `${payload.nettleieCost.toFixed(2)} kr`, styles.tooltipRowNettleie)}
+
+          <div className={styles.tooltipDivider} />
+
+          <div className={styles.tooltipSectionLabel}>Per kWh</div>
+          {row('total-øre', 'Total', `${(payload.totalKwhPrice * 100).toFixed(1)} øre`, styles.tooltipRowTotal)}
+          {row('spot-øre', 'Spot', `${(payload.spotKwhPrice * 100).toFixed(1)} øre`, styles.tooltipRowSpot)}
+          {row('nettleie-øre', 'Nettleie', `${(payload.nettleieKwhPrice * 100).toFixed(1)} øre`, styles.tooltipRowNettleie)}
         </article>
       );
     }
     return null;
   };
 
-  const labelFormatter = (label: RenderableText): RenderableText => {
-    if (typeof label === 'number') {
-      return label.toFixed(0);
-    }
-    return label;
-  };
-
   return (
     <ResponsiveContainer width="100%" height={240}>
-      <ComposedChart height={400} data={data}>
-        <XAxis dataKey="date" />
+      <ComposedChart
+        height={400}
+        data={data}
+        stackOffset="none"
+        margin={{ top: 36, right: 0, bottom: 0, left: 0 }}
+      >
+        <XAxis dataKey="date" padding={{ left: 16, right: 16 }} />
+        <YAxis hide />
         <Tooltip content={(content) => renderTooltip(content)} />
 
-        <Bar animationDuration={250} hide={!showConsumption} dataKey="consumption" barSize={20} fill="#413ea0">
-          {!showCost && (
-            <LabelList
-              style={{ fontSize: '12px' }}
-              fill={'#ffffff'}
-              dataKey="consumption"
-              position="insideTop"
-              formatter={labelFormatter}
-            />
-          )}
-        </Bar>
-        <Line
+        <Area
           animationDuration={250}
-          hide={!showCost}
-          type="monotone"
-          dataKey="spotPriceCost"
-          name="Spot"
-          stroke={SPOT_COLOR}
-          dot={showConsumption ? undefined : <CustomDot />}
-          activeDot={showConsumption}
-        />
-        <Line
-          animationDuration={250}
-          hide={!showCost}
           type="monotone"
           dataKey="nettleieCost"
           name="Nettleie"
+          stackId="cost"
           stroke={NETTLEIE_COLOR}
-          dot={showConsumption ? undefined : <CustomDot />}
-          activeDot={showConsumption}
+          fill={NETTLEIE_COLOR}
+          fillOpacity={0.8}
+          dot={false}
+          activeDot={false}
         />
-        <Line
+        <Area
           animationDuration={250}
-          hide={!showCost}
+          type="monotone"
+          dataKey="spotPriceCost"
+          name="Spot"
+          stackId="cost"
+          stroke={SPOT_COLOR}
+          fill={SPOT_COLOR}
+          fillOpacity={0.8}
+          dot={false}
+          activeDot={false}
+        />
+        <Area
+          animationDuration={250}
           type="monotone"
           dataKey="cost"
           name="Total"
+          stackId="cost"
           stroke={TOTAL_COLOR}
-          dot={showConsumption ? undefined : <CustomDot />}
-          activeDot={showConsumption}
+          fill={TOTAL_COLOR}
+          fillOpacity={0.8}
+          dot={CustomDotNoClip}
+          activeDot={false}
         />
       </ComposedChart>
     </ResponsiveContainer>
@@ -185,3 +110,4 @@ const ConsumptionChart: FC<ConsumptionChartProps> = (props: ConsumptionChartProp
 };
 
 export default React.memo(ConsumptionChart);
+
