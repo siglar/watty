@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC } from 'react';
 import ConsumptionChart from '../ConsumptionChart/ConsumptionChart';
 import { NORGESPRIS_NOK_PER_KWH } from '../../helpers/strom.helper';
 import { ChartData } from '../../models/chart.models';
@@ -46,9 +46,6 @@ const ConsumptionView: FC<ConsumptionViewProps> = (props: ConsumptionViewProps) 
     } as ChartData;
   });
 
-  const [showCost, setShowCost] = useState<boolean>(true);
-  const [showConsumption, setShowConsumption] = useState<boolean>(false);
-
   const consumedKw = Number(consumption.reduce((pv, cv) => pv + cv.totalConsumptionInKwh, 0).toFixed(2));
   const priceForDevice = Number(chartData.reduce((pv, cv) => pv + cv.cost, 0).toFixed(2));
   const averagePrice =
@@ -74,16 +71,11 @@ const ConsumptionView: FC<ConsumptionViewProps> = (props: ConsumptionViewProps) 
             fastleddKrPerMonth={fastleddKrPerMonth}
           />
 
-          <ConsumptionHeader
-            setShowConsumption={setShowConsumption}
-            setShowCost={setShowCost}
-            showConsumption={showConsumption}
-            showCost={showCost}
-          />
+          <ConsumptionHeader />
         </div>
 
         <div className={styles.consumptionWrapper}>
-          <ConsumptionChart data={chartData} showConsumption={showConsumption} showCost={showCost} />
+          <ConsumptionChart data={chartData} />
         </div>
       </DrawerContextProvider>
     </>

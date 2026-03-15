@@ -12,6 +12,7 @@
   margin-top: 2rem;
   height: 320px;
   width: 100%;
+  z-index: 2;
 }
 
 .consumptionWrapper:focus:not(:focus-visible),
