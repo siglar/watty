@@ -4,12 +4,7 @@ import { useAuthContext } from '../context/auth.context';
 import { StromAggregationEnum } from '../enums/stromAggregation.enum';
 import { StromZoneEnum } from '../enums/stromZone.enum';
 import { getFirstDay, getLastDay } from '../helpers/date.helpers';
-import {
-  FylkeLookupResult,
-  GridCompanyLookupResult,
-  PowerTierLookupResult,
-  UserSettings
-} from '../models/lookup.models';
+import { FylkeLookupResult, GridCompanyLookupResult, PowerTierLookupResult, UserSettings } from '../models/lookup.models';
 import { Tokens } from '../models/tokens.models';
 import { ConsumptionDay } from '../models/Watty/consumptionDay';
 
@@ -17,7 +12,7 @@ let wattyApiUrl = '';
 if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
   wattyApiUrl = 'https://localhost:7040';
 } else {
-  wattyApiUrl = 'https://watty.azurewebsites.net';
+  wattyApiUrl = 'https://api.watty.no';
 }
 
 export interface UseWattyEndpoint {
@@ -202,10 +197,7 @@ export const useWattyEndpoint = (): UseWattyEndpoint => {
     return result.data;
   };
 
-  const getFastledd = async (
-    year?: number,
-    month?: number
-  ): Promise<{ fastleddKrPerMonth: number }> => {
+  const getFastledd = async (year?: number, month?: number): Promise<{ fastleddKrPerMonth: number }> => {
     const params: Record<string, number> = {};
     if (year != null) params.year = year;
     if (month != null) params.month = month;
@@ -230,3 +222,4 @@ export const useWattyEndpoint = (): UseWattyEndpoint => {
     getFastledd
   };
 };
+
