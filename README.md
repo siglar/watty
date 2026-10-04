@@ -1,4 +1,4 @@
-<a href="https://watty.nu/"><img src="https://user-images.githubusercontent.com/3383006/200322186-19210182-ada6-432f-af2e-48a33af38f52.jpg" alt="drawing" width="200"/></a>
+<a href="https://watty.no/"><img src="https://user-images.githubusercontent.com/3383006/200322186-19210182-ada6-432f-af2e-48a33af38f52.jpg" alt="drawing" width="200"/></a>
 
 
 Watty is a home automation platform built on top of [Shelly](https://shelly-api-docs.shelly.cloud/) and [Tibber's](https://developer.tibber.com/) APIs.
