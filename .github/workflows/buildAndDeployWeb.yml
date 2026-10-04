@@ -47,8 +47,24 @@ jobs:
           # watty-server repo's own deploy workflow (see that repo's
           # buildAndDeployAPI.yml), which must run at least once before this
           # workflow's first run so the directory exists and is writable.
-          rsync -az --delete -e "ssh -o StrictHostKeyChecking=yes -i ~/.ssh/deploy_key" \
-            dist/ "$DEPLOY_USER@$DEPLOY_HOST:$REMOTE_DIST_DIR/"
+          #
+          # Streams dist/ as a tarball over SSH (only ssh + tar needed on the
+          # server). It is unpacked into a staging dir first, so a failed
+          # upload never leaves the live site half-deleted; then the live
+          # contents are swapped. The dist dir itself is never replaced since
+          # it is bind-mounted into the Caddy container.
+          tar -czf - -C dist . | ssh -o StrictHostKeyChecking=yes -i ~/.ssh/deploy_key \
+            "$DEPLOY_USER@$DEPLOY_HOST" "
+              set -euo pipefail
+              DIST='$REMOTE_DIST_DIR'
+              STAGE=\"\$DIST.new\"
+              rm -rf \"\$STAGE\"
+              mkdir -p \"\$STAGE\"
+              tar -xzf - -C \"\$STAGE\"
+              find \"\$DIST\" -mindepth 1 -delete
+              cp -a \"\$STAGE\"/. \"\$DIST\"/
+              rm -rf \"\$STAGE\"
+            "
 
       - name: Check site is reachable
         run: |
