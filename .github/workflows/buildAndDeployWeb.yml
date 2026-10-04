@@ -1,0 +1,63 @@
+name: Build and deploy web
+
+on:
+  push:
+    branches: ["master"]
+  workflow_dispatch:
+
+concurrency:
+  group: watty-web-deploy
+  cancel-in-progress: true
+
+env:
+  DEPLOY_HOST: "129.121.111.69"
+  DEPLOY_USER: "deploy"
+  REMOTE_DIST_DIR: "/srv/watty-web/dist"
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "lts/*"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Set up deploy SSH key and pinned host key
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "${{ secrets.DEPLOY_HOST_KEY }}" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Deploy dist/ to VPS
+        run: |
+          # No sudo needed here - /srv/watty-web is chowned to deploy by the
+          # watty-server repo's own deploy workflow (see that repo's
+          # buildAndDeployAPI.yml), which must run at least once before this
+          # workflow's first run so the directory exists and is writable.
+          rsync -az --delete -e "ssh -o StrictHostKeyChecking=yes -i ~/.ssh/deploy_key" \
+            dist/ "$DEPLOY_USER@$DEPLOY_HOST:$REMOTE_DIST_DIR/"
+
+      - name: Check site is reachable
+        run: |
+          # Non-fatal: until watty.no's DNS is pointed at this VPS, this is
+          # expected to fail and shouldn't block the deploy.
+          curl -fsS --connect-timeout 5 --max-time 5 https://watty.no/ >/dev/null \
+            && echo "watty.no responded" \
+            || echo "watty.no not reachable yet (DNS not cut over, or cert still provisioning) - not failing the build for this"
+
+      - name: Clean up local secrets
+        if: always()
+        run: rm -f ~/.ssh/deploy_key
